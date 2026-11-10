@@ -1,0 +1,24 @@
+# Agent and Antigravity system directories
+.agents/
+.agents
+.agent/
+agents/
+mcp_config.json
+ARCHITECTURE.md
+
+# Workspace agent toolkit & shared configs
+.shared/
+rules/
+skills/
+tasks/
+workflows/
+scripts/
+
+# System & Cache files
+.system_generated/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+Thumbs.db
+node_modules/

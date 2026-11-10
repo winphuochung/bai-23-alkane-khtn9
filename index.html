@@ -1,0 +1,2698 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Game Học Tập: Bài 23 Alkane - Khoa Học Tự Nhiên 9</title>
+  <!-- Google Fonts: Nunito & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Nunito"', 'system-ui', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            game: {
+              primary: '#059669',
+              accent: '#f59e0b',
+              flame: '#f97316',
+              sky: '#0284c7',
+              purple: '#7c3aed',
+              dark: '#0f172a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #ecfdf5 0%, #e0f2fe 50%, #fef3c7 100%);
+      min-height: 100vh;
+      color: #1e293b;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    .tab-active {
+      background: linear-gradient(135deg, #059669 0%, #0d9488 100%) !important;
+      color: #ffffff !important;
+      box-shadow: 0 10px 15px -3px rgba(13, 148, 136, 0.35) !important;
+      transform: translateY(-2px);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Floating Score Popup Animation */
+    @keyframes floatUpFade {
+      0% { opacity: 0; transform: translate(-50%, 0) scale(0.6); }
+      30% { opacity: 1; transform: translate(-50%, -25px) scale(1.15); }
+      100% { opacity: 0; transform: translate(-50%, -60px) scale(0.9); }
+    }
+    .float-score-anim {
+      animation: floatUpFade 1.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      pointer-events: none;
+    }
+
+    /* Badge Unlock Modal Popup */
+    @keyframes badgePop {
+      0% { transform: scale(0.4) rotate(-15deg); opacity: 0; }
+      60% { transform: scale(1.15) rotate(5deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .badge-pop-anim {
+      animation: badgePop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    /* Flame animation */
+    @keyframes flame-flicker {
+      0% { transform: scale(1) rotate(-1deg); }
+      50% { transform: scale(1.08) rotate(1.5deg); }
+      100% { transform: scale(0.96) rotate(-0.5deg); }
+    }
+    .flame-anim {
+      animation: flame-flicker 0.8s infinite alternate ease-in-out;
+      transform-origin: bottom center;
+    }
+
+    /* Shake on wrong answer */
+    .shake {
+      animation: shake-anim 0.45s ease-in-out;
+    }
+    @keyframes shake-anim {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    /* Glow border when correct */
+    .glow-correct {
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.6) !important;
+      border-color: #10b981 !important;
+    }
+
+    @media print {
+      body * { visibility: hidden; }
+      #certificate-modal, #certificate-preview, #certificate-preview * { visibility: visible; }
+      #certificate-preview {
+        position: absolute; left: 0; top: 0; width: 100%; box-shadow: none;
+      }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- ======================================================== -->
+  <!-- 0. MÀN HÌNH BẮT ĐẦU MINI GAME (START SCREEN OVERLAY)     -->
+  <!-- ======================================================== -->
+  <div id="game-start-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-md overflow-y-auto">
+    <div class="relative w-full max-w-xl bg-white rounded-3xl p-6 sm:p-10 shadow-2xl border-4 border-emerald-400 text-center overflow-hidden my-auto">
+      
+      <!-- Họa tiết nền trang trí -->
+      <div class="absolute -top-12 -right-12 w-48 h-48 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="absolute -bottom-12 -left-12 w-48 h-48 bg-amber-400/20 rounded-full blur-2xl pointer-events-none"></div>
+
+      <!-- Badge Tiêu đề -->
+      <div class="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 font-extrabold text-xs uppercase px-4 py-1.5 rounded-full mb-3 shadow-xs">
+        <span>🎮 MINI GAME HỌC TẬP</span> • <span>KHTN 9 (KẾT NỐI TRI THỨC)</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+        ĐẤU TRƯỜNG ALKANE: <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-600 to-amber-500">NHÀ HÓA HỌC TƯƠNG LAI</span>
+      </h1>
+      <p class="text-slate-600 text-sm sm:text-base mt-2 max-w-md mx-auto">
+        Khám phá bí ẩn nhiên liệu, làm chủ cấu trúc phân tử và thí nghiệm đốt cháy Butane để trở thành <b>Đại Kiện Tướng Alkane</b>!
+      </p>
+
+      <!-- Form Đăng ký người chơi -->
+      <div class="mt-6 p-5 bg-slate-50 rounded-2xl border border-slate-200 text-left space-y-4 shadow-inner">
+        <div>
+          <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1.5">
+            👤 Tên của em (hiển thị trên bảng điểm & giấy khen):
+          </label>
+          <input type="text" id="start-student-name" placeholder="Ví dụ: Nguyễn Văn An" class="w-full px-4 py-3 rounded-xl border-2 border-slate-300 focus:border-emerald-500 focus:outline-none font-bold text-slate-900 text-base shadow-sm" value="Nguyễn Văn An">
+        </div>
+
+        <div>
+          <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-2">
+            🎭 Chọn Nhân vật đại diện của em:
+          </label>
+          <div class="grid grid-cols-4 gap-2" id="avatar-selector">
+            <button type="button" onclick="selectAvatar('🧑‍🔬', 'Thám tử Hóa học', this)" class="avatar-btn p-3 rounded-2xl border-2 border-emerald-500 bg-emerald-50 flex flex-col items-center justify-center transition active:scale-95 shadow-sm">
+              <span class="text-3xl">🧑‍🔬</span>
+              <span class="text-[10px] font-bold text-slate-700 mt-1">Thám tử</span>
+            </button>
+            <button type="button" onclick="selectAvatar('🚀', 'Phi hành gia Năng lượng', this)" class="avatar-btn p-3 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 flex flex-col items-center justify-center transition active:scale-95 shadow-sm">
+              <span class="text-3xl">🚀</span>
+              <span class="text-[10px] font-bold text-slate-700 mt-1">Phi hành</span>
+            </button>
+            <button type="button" onclick="selectAvatar('🧙‍♂️', 'Phù thủy Thí nghiệm', this)" class="avatar-btn p-3 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 flex flex-col items-center justify-center transition active:scale-95 shadow-sm">
+              <span class="text-3xl">🧙‍♂️</span>
+              <span class="text-[10px] font-bold text-slate-700 mt-1">Phù thủy</span>
+            </button>
+            <button type="button" onclick="selectAvatar('👩‍🎓', 'Thủ khoa KHTN', this)" class="avatar-btn p-3 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 flex flex-col items-center justify-center transition active:scale-95 shadow-sm">
+              <span class="text-3xl">👩‍🎓</span>
+              <span class="text-[10px] font-bold text-slate-700 mt-1">Thủ khoa</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nhiệm vụ & Mục tiêu Game -->
+      <div class="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
+        <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200">
+          <span class="text-base block mb-0.5">⭐</span>
+          <span class="font-bold text-amber-900">180+ Điểm XP</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-purple-50 border border-purple-200">
+          <span class="text-base block mb-0.5">🏆</span>
+          <span class="font-bold text-purple-900">5 Huy Hiệu</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
+          <span class="text-base block mb-0.5">📜</span>
+          <span class="font-bold text-emerald-900">Bằng Khen Danh Dự</span>
+        </div>
+      </div>
+
+      <!-- Nút Bắt Đầu Lớn -->
+      <button onclick="startGame()" class="mt-6 w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-700 hover:to-teal-800 text-white font-black text-lg tracking-wide uppercase shadow-lg shadow-emerald-600/40 hover:shadow-xl transition transform active:scale-95 flex items-center justify-center gap-3">
+        <span>🚀 BẮT ĐẦU CHINH PHỤC NGAY!</span>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL THÔNG BÁO MỞ KHÓA HUY HIỆU (BADGE UNLOCKED MODAL)  -->
+  <!-- ======================================================== -->
+  <div id="badge-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm hidden">
+    <div class="relative w-full max-w-sm bg-white rounded-3xl p-6 text-center border-4 border-amber-400 shadow-2xl badge-pop-anim">
+      <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-amber-400 to-yellow-200 flex items-center justify-center text-4xl shadow-lg border-2 border-white mb-3" id="badge-modal-icon">
+        🏅
+      </div>
+      <div class="text-xs font-black uppercase tracking-wider text-amber-700">🎉 MỞ KHÓA THÀNH TÍCH MỚI!</div>
+      <h3 class="text-xl font-black text-slate-900 mt-1" id="badge-modal-title">Huy Hiệu Mầm Xanh</h3>
+      <p class="text-xs text-slate-600 mt-2 font-medium" id="badge-modal-desc">
+        Chúc mừng em đã hoàn thành xuất sắc thử thách!
+      </p>
+      <div class="mt-4 inline-block bg-amber-100 text-amber-900 px-3 py-1 rounded-full text-xs font-extrabold" id="badge-modal-reward">
+        +20 XP Thưởng Thành Tích ⭐
+      </div>
+      <button onclick="closeBadgeModal()" class="mt-5 w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-sm transition active:scale-95 shadow-md">
+        Tuyệt Vời! Tiếp Tục Chơi
+      </button>
+    </div>
+  </div>
+
+  <!-- FLOATING SCORE CONTAINER (Hiển thị +XP bay lên) -->
+  <div id="floating-score-container" class="fixed inset-0 pointer-events-none z-50"></div>
+
+  <!-- ======================================================== -->
+  <!-- TOP HEADER (GAME DASHBOARD)                              -->
+  <!-- ======================================================== -->
+  <header class="sticky top-0 z-40 glass-card border-b border-emerald-100/80 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5">
+      <div class="flex items-center justify-between gap-3">
+        
+        <!-- Player Info & Level -->
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-md text-2xl flex-shrink-0 border-2 border-white" id="header-avatar">
+            🧑‍🔬
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="header-student-name" class="font-black text-slate-900 text-sm sm:text-base leading-tight">Nguyễn Văn An</span>
+              <span id="header-level-badge" class="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">Lv.1 Tập sự</span>
+            </div>
+            <div class="text-[11px] font-semibold text-slate-500 flex items-center gap-1.5">
+              <span>BÀI 23: ALKANE (KHTN 9)</span>
+              <span class="text-slate-300">•</span>
+              <span id="header-streak-badge" class="text-orange-600 font-extrabold hidden">🔥 Chuỗi x1</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Điểm số, Huy hiệu & Nút Chơi lại -->
+        <div class="flex items-center gap-2 sm:gap-4">
+          
+          <!-- Điểm số XP -->
+          <div class="flex items-center gap-1.5 bg-amber-50 border-2 border-amber-300 px-3 py-1 rounded-full shadow-sm">
+            <span class="text-base sm:text-lg">⭐</span>
+            <div class="flex flex-col text-left">
+              <span class="text-[9px] uppercase font-black text-amber-700 leading-none">Điểm XP</span>
+              <span id="user-points" class="font-black text-amber-950 leading-none text-sm sm:text-base">0</span>
+            </div>
+          </div>
+
+          <!-- Bộ sưu tập Huy hiệu Nhanh -->
+          <div class="hidden sm:flex items-center gap-1 bg-white border border-slate-200 px-2.5 py-1 rounded-full shadow-xs" title="Bộ sưu tập Huy hiệu">
+            <span id="badge-icon-1" class="text-base opacity-25 grayscale transition-all" title="Huy hiệu 1: Khởi Động Nhanh">🥉</span>
+            <span id="badge-icon-2" class="text-base opacity-25 grayscale transition-all" title="Huy hiệu 2: Thợ Săn Hydrocarbon">🥈</span>
+            <span id="badge-icon-3" class="text-base opacity-25 grayscale transition-all" title="Huy hiệu 3: Bậc Thầy Phân Tử">🧬</span>
+            <span id="badge-icon-4" class="text-base opacity-25 grayscale transition-all" title="Huy hiệu 4: Phù Thủy Ngọn Lửa">🔥</span>
+            <span id="badge-icon-5" class="text-base opacity-25 grayscale transition-all" title="Huy hiệu 5: Đại Kiện Tướng Alkane">👑</span>
+          </div>
+
+          <!-- Nút Âm thanh -->
+          <button id="sound-toggle-btn" onclick="toggleSound()" title="Bật/Tắt âm thanh" class="w-9 h-9 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-slate-700 transition shadow-xs active:scale-95">
+            <span id="sound-icon" class="text-lg">🔊</span>
+          </button>
+
+          <!-- NÚT CHƠI LẠI TRÊN HEADER -->
+          <button onclick="confirmRestartGame()" title="Chơi lại từ đầu" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs transition active:scale-95 flex items-center gap-1 border border-slate-300">
+            <span>🔄</span> <span class="hidden md:inline">Chơi lại</span>
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- Global Game Progress Bar -->
+      <div class="w-full flex items-center gap-2 mt-2">
+        <div class="flex-1 h-2 bg-slate-200/80 rounded-full overflow-hidden">
+          <div id="global-progress-bar" class="h-full bg-gradient-to-r from-emerald-500 via-teal-500 to-amber-400 rounded-full transition-all duration-500 w-0"></div>
+        </div>
+        <span id="global-progress-text" class="text-[11px] font-black text-emerald-800 min-w-[32px] text-right">0%</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- GAME NAVIGATION TABS -->
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-1">
+    <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none snap-x" id="nav-tabs-container">
+      <button onclick="switchTab('tab-intro')" id="btn-tab-intro" class="tab-btn tab-active snap-start flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-extrabold text-xs text-slate-700 hover:bg-white/80 transition whitespace-nowrap shadow-xs">
+        <span>🚀</span> <span>1. Khởi động</span>
+      </button>
+      <button onclick="switchTab('tab-concept')" id="btn-tab-concept" class="tab-btn snap-start flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-extrabold text-xs text-slate-700 hover:bg-white/80 transition whitespace-nowrap shadow-xs bg-white/60">
+        <span>🧪</span> <span>2. Khái niệm</span>
+      </button>
+      <button onclick="switchTab('tab-structure')" id="btn-tab-structure" class="tab-btn snap-start flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-extrabold text-xs text-slate-700 hover:bg-white/80 transition whitespace-nowrap shadow-xs bg-white/60">
+        <span>🧬</span> <span>3. Cấu tạo & Tên gọi</span>
+      </button>
+      <button onclick="switchTab('tab-lab')" id="btn-tab-lab" class="tab-btn snap-start flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-extrabold text-xs text-slate-700 hover:bg-white/80 transition whitespace-nowrap shadow-xs bg-white/60">
+        <span>🔥</span> <span>4. Thí nghiệm ảo</span>
+      </button>
+      <button onclick="switchTab('tab-application')" id="btn-tab-application" class="tab-btn snap-start flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-extrabold text-xs text-slate-700 hover:bg-white/80 transition whitespace-nowrap shadow-xs bg-white/60">
+        <span>⛽</span> <span>5. Ứng dụng</span>
+      </button>
+      <button onclick="switchTab('tab-challenge')" id="btn-tab-challenge" class="tab-btn snap-start flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-extrabold text-xs text-slate-700 hover:bg-white/80 transition whitespace-nowrap shadow-xs bg-white/60">
+        <span>🏆</span> <span>6. Đấu trường Quiz</span>
+      </button>
+      <button onclick="switchTab('tab-summary')" id="btn-tab-summary" class="tab-btn snap-start flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-extrabold text-xs text-slate-700 hover:bg-white/80 transition whitespace-nowrap shadow-xs bg-white/60">
+        <span>📜</span> <span>7. Tổng kết & Bằng khen</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN GAME AREA -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-5">
+
+    <!-- ========================================== -->
+    <!-- 1. KHỞI ĐỘNG (WARM UP MISSION)             -->
+    <!-- ========================================== -->
+    <section id="tab-intro" class="tab-content block space-y-5">
+      
+      <!-- Nhiệm vụ banner -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-emerald-600 via-teal-700 to-cyan-800 text-white relative overflow-hidden shadow-xl">
+        <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="relative z-10">
+          <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-3 border border-white/20">
+            🎯 NHIỆM VỤ 1: GIẢI MÃ NHIÊN LIỆU BÍ ẨN
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-black leading-snug tracking-tight mb-3">
+            Chào mừng <span class="player-name-text text-amber-300">Nguyễn Văn An</span> đến với Hành Trình Alkane!
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs sm:text-sm font-semibold">
+            <div class="flex items-start gap-2 bg-white/10 backdrop-blur-sm p-2.5 rounded-xl border border-white/10">
+              <span class="text-emerald-300 font-bold">✓</span>
+              <span>Nắm chắc khái niệm <b>hydrocarbon</b> và <b>alkane</b>.</span>
+            </div>
+            <div class="flex items-start gap-2 bg-white/10 backdrop-blur-sm p-2.5 rounded-xl border border-white/10">
+              <span class="text-emerald-300 font-bold">✓</span>
+              <span>Làm chủ CTCT và tên gọi (<b>C1 – C4</b>: Methane, Ethane, Propane, Butane).</span>
+            </div>
+            <div class="flex items-start gap-2 bg-white/10 backdrop-blur-sm p-2.5 rounded-xl border border-white/10">
+              <span class="text-emerald-300 font-bold">✓</span>
+              <span>Thực hành phòng thí nghiệm ảo đốt cháy Butane, viết đúng PTHH.</span>
+            </div>
+            <div class="flex items-start gap-2 bg-white/10 backdrop-blur-sm p-2.5 rounded-xl border border-white/10">
+              <span class="text-emerald-300 font-bold">✓</span>
+              <span>Khám phá ứng dụng làm nhiên liệu và thi đấu đạt huy hiệu cao quý!</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tình huống SGK & Câu hỏi khởi động -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 bg-white border border-slate-200/80 shadow-md">
+        <div class="flex flex-col lg:flex-row gap-6 items-center">
+          
+          <!-- Minh họa các đồ vật quen thuộc -->
+          <div class="w-full lg:w-5/12 bg-gradient-to-tr from-amber-50 to-orange-100 rounded-2xl p-5 flex flex-col items-center justify-center border border-orange-200 shadow-inner">
+            <span class="text-xs font-black text-amber-800 bg-amber-200 px-3 py-1 rounded-full uppercase mb-3">Nhiên liệu quanh ta (SGK T103)</span>
+            
+            <div class="grid grid-cols-2 gap-3 w-full max-w-sm">
+              <div class="bg-white p-3 rounded-xl shadow-xs text-center">
+                <span class="text-3xl mb-1 block">🔥</span>
+                <span class="font-black text-xs text-slate-800">Bật lửa gas</span>
+                <span class="text-[10px] text-slate-500 block">Khí hoá lỏng</span>
+              </div>
+              <div class="bg-white p-3 rounded-xl shadow-xs text-center">
+                <span class="text-3xl mb-1 block">🛢️</span>
+                <span class="font-black text-xs text-slate-800">Bình gas bếp</span>
+                <span class="text-[10px] text-slate-500 block">Propane & Butane</span>
+              </div>
+              <div class="bg-white p-3 rounded-xl shadow-xs text-center">
+                <span class="text-3xl mb-1 block">⛽</span>
+                <span class="font-black text-xs text-slate-800">Xăng, dầu xe</span>
+                <span class="text-[10px] text-slate-500 block">Alkane lỏng</span>
+              </div>
+              <div class="bg-white p-3 rounded-xl shadow-xs text-center">
+                <span class="text-3xl mb-1 block">🕯️</span>
+                <span class="font-black text-xs text-slate-800">Nến Paraffin</span>
+                <span class="text-[10px] text-slate-500 block">Alkane rắn</span>
+              </div>
+            </div>
+            
+            <p class="text-xs text-amber-900 font-bold mt-3 text-center italic">
+              "Điểm chung nào liên kết tất cả các nguồn nhiên liệu này?"
+            </p>
+          </div>
+
+          <!-- Câu hỏi đố vui khởi động -->
+          <div class="w-full lg:w-7/12 space-y-4">
+            <div class="inline-block bg-orange-100 text-orange-900 font-extrabold text-xs uppercase px-3 py-1 rounded-full">
+              ❓ Câu hỏi khởi động (Trang 103 SGK)
+            </div>
+            <h3 class="text-xl sm:text-2xl font-black text-slate-800 leading-snug">
+              Khí mỏ dầu hoá lỏng, xăng hay dầu dùng cho xe cộ, máy bay đều có thành phần chính là gì?
+            </h3>
+            <p class="text-slate-600 text-sm leading-relaxed">
+              Hãy chọn đáp án đúng để mở khóa điểm số đầu tiên và nhận <b>Huy Hiệu Khởi Động Nhanh</b>!
+            </p>
+
+            <div id="warmup-quiz-container" class="space-y-3 pt-1">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="warmup-options">
+                <button onclick="checkWarmupAnswer(0, this)" class="warmup-btn text-left p-3.5 rounded-2xl border-2 border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition font-bold text-slate-800 text-sm flex items-center justify-between">
+                  <span>A. Muối ăn và đường</span>
+                  <span class="text-slate-400 text-xs">◻️</span>
+                </button>
+                <button onclick="checkWarmupAnswer(1, this)" class="warmup-btn text-left p-3.5 rounded-2xl border-2 border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition font-bold text-slate-800 text-sm flex items-center justify-between">
+                  <span>B. Các alkane</span>
+                  <span class="text-slate-400 text-xs">◻️</span>
+                </button>
+                <button onclick="checkWarmupAnswer(2, this)" class="warmup-btn text-left p-3.5 rounded-2xl border-2 border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition font-bold text-slate-800 text-sm flex items-center justify-between">
+                  <span>C. Tinh bột và chất béo</span>
+                  <span class="text-slate-400 text-xs">◻️</span>
+                </button>
+                <button onclick="checkWarmupAnswer(3, this)" class="warmup-btn text-left p-3.5 rounded-2xl border-2 border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition font-bold text-slate-800 text-sm flex items-center justify-between">
+                  <span>D. Kim loại nhôm, sắt</span>
+                  <span class="text-slate-400 text-xs">◻️</span>
+                </button>
+              </div>
+
+              <!-- Feedback box -->
+              <div id="warmup-feedback" class="hidden p-4 rounded-2xl mt-4 transition-all"></div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Chuyển chặng -->
+      <div class="flex justify-end pt-1">
+        <button onclick="switchTab('tab-concept')" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black hover:shadow-lg transition flex items-center gap-2 group active:scale-95 text-sm">
+          <span>Tiến vào Chặng 2: Khái niệm Hydrocarbon & Alkane</span>
+          <span class="group-hover:translate-x-1 transition-transform">➔</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 2. KHÁI NIỆM HYDROCARBON & ALKANE          -->
+    <!-- ========================================== -->
+    <section id="tab-concept" class="tab-content hidden space-y-5">
+      
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <span class="text-xs font-black uppercase tracking-wider text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">Phần I (SGK T103)</span>
+          <h2 class="text-2xl font-black text-slate-900 mt-1">Khái Niệm Hydrocarbon & Alkane</h2>
+        </div>
+        <span class="text-xs bg-slate-100 text-slate-600 font-bold px-3 py-1 rounded-full border border-slate-200">Quan sát Hình 23.1</span>
+      </div>
+
+      <!-- Quan sát 3 chất Hình 23.1 -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 bg-white border border-slate-200 shadow-md">
+        <h3 class="text-base sm:text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
+          <span>🔍</span> Phân tích 3 Hydrocarbon tiêu biểu (Hình 23.1 SGK):
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          
+          <!-- Methane -->
+          <div class="rounded-2xl border-2 border-emerald-300 bg-emerald-50/40 p-4 flex flex-col items-center text-center relative hover:shadow-md transition">
+            <span class="absolute top-3 left-3 bg-emerald-600 text-white text-[10px] font-black px-2 py-0.5 rounded-md">a) Methane (CH₄)</span>
+            <div class="my-3 w-32 h-32 bg-white rounded-2xl p-2 flex flex-col items-center justify-center border border-emerald-100 shadow-inner">
+              <svg viewBox="0 0 100 100" class="w-24 h-24">
+                <line x1="50" y1="50" x2="50" y2="18" stroke="#059669" stroke-width="3" stroke-linecap="round"/>
+                <line x1="50" y1="50" x2="50" y2="82" stroke="#059669" stroke-width="3" stroke-linecap="round"/>
+                <line x1="50" y1="50" x2="18" y2="50" stroke="#059669" stroke-width="3" stroke-linecap="round"/>
+                <line x1="50" y1="50" x2="82" y2="50" stroke="#059669" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="50" cy="50" r="14" fill="#0f172a" />
+                <text x="50" y="55" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">C</text>
+                <circle cx="50" cy="18" r="10" fill="#38bdf8" /><text x="50" y="22" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">H</text>
+                <circle cx="50" cy="82" r="10" fill="#38bdf8" /><text x="50" y="86" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">H</text>
+                <circle cx="18" cy="50" r="10" fill="#38bdf8" /><text x="18" y="54" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">H</text>
+                <circle cx="82" cy="50" r="10" fill="#38bdf8" /><text x="82" y="54" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">H</text>
+              </svg>
+            </div>
+            <p class="font-bold text-slate-800 text-xs">Có trong khí bùn ao, biogas</p>
+            <div class="mt-2 text-[11px] bg-emerald-100 text-emerald-900 font-extrabold px-2.5 py-1 rounded-full">
+              Chỉ có liên kết đơn ➔ <b>Alkane</b>
+            </div>
+          </div>
+
+          <!-- Propane -->
+          <div class="rounded-2xl border-2 border-teal-300 bg-teal-50/40 p-4 flex flex-col items-center text-center relative hover:shadow-md transition">
+            <span class="absolute top-3 left-3 bg-teal-600 text-white text-[10px] font-black px-2 py-0.5 rounded-md">b) Propane (C₃H₈)</span>
+            <div class="my-3 w-32 h-32 bg-white rounded-2xl p-2 flex flex-col items-center justify-center border border-teal-100 shadow-inner">
+              <svg viewBox="0 0 120 80" class="w-28 h-20">
+                <line x1="30" y1="40" x2="60" y2="40" stroke="#0d9488" stroke-width="3" stroke-linecap="round"/>
+                <line x1="60" y1="40" x2="90" y2="40" stroke="#0d9488" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="30" cy="40" r="10" fill="#0f172a"/><text x="30" y="44" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">C</text>
+                <circle cx="60" cy="40" r="10" fill="#0f172a"/><text x="60" y="44" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">C</text>
+                <circle cx="90" cy="40" r="10" fill="#0f172a"/><text x="90" y="44" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">C</text>
+                <circle cx="10" cy="40" r="5" fill="#38bdf8"/>
+                <circle cx="30" cy="15" r="5" fill="#38bdf8"/><circle cx="30" cy="65" r="5" fill="#38bdf8"/>
+                <circle cx="60" cy="15" r="5" fill="#38bdf8"/><circle cx="60" cy="65" r="5" fill="#38bdf8"/>
+                <circle cx="90" cy="15" r="5" fill="#38bdf8"/><circle cx="90" cy="65" r="5" fill="#38bdf8"/>
+                <circle cx="110" cy="40" r="5" fill="#38bdf8"/>
+              </svg>
+            </div>
+            <p class="font-bold text-slate-800 text-xs">Có trong bình gas đun nấu</p>
+            <div class="mt-2 text-[11px] bg-teal-100 text-teal-900 font-extrabold px-2.5 py-1 rounded-full">
+              Chỉ có liên kết đơn ➔ <b>Alkane</b>
+            </div>
+          </div>
+
+          <!-- Ethylene -->
+          <div class="rounded-2xl border-2 border-amber-300 bg-amber-50/40 p-4 flex flex-col items-center text-center relative hover:shadow-md transition">
+            <span class="absolute top-3 left-3 bg-amber-600 text-white text-[10px] font-black px-2 py-0.5 rounded-md">c) Ethylene (C₂H₄)</span>
+            <div class="my-3 w-32 h-32 bg-white rounded-2xl p-2 flex flex-col items-center justify-center border border-amber-100 shadow-inner">
+              <svg viewBox="0 0 100 80" class="w-24 h-20">
+                <line x1="38" y1="37" x2="62" y2="37" stroke="#ea580c" stroke-width="2.5"/>
+                <line x1="38" y1="43" x2="62" y2="43" stroke="#ea580c" stroke-width="2.5"/>
+                <circle cx="35" cy="40" r="11" fill="#0f172a"/><text x="35" y="44" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">C</text>
+                <circle cx="65" cy="40" r="11" fill="#0f172a"/><text x="65" y="44" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">C</text>
+                <circle cx="18" cy="22" r="6" fill="#fb923c"/><circle cx="18" cy="58" r="6" fill="#fb923c"/>
+                <circle cx="82" cy="22" r="6" fill="#fb923c"/><circle cx="82" cy="58" r="6" fill="#fb923c"/>
+              </svg>
+            </div>
+            <p class="font-bold text-slate-800 text-xs">Khí sinh ra từ quả chín</p>
+            <div class="mt-2 text-[11px] bg-amber-100 text-amber-900 font-extrabold px-2.5 py-1 rounded-full">
+              Có <b>liên kết đôi C=C</b> ➔ <i>Không phải Alkane</i>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 2 Định nghĩa SGK cốt lõi -->
+        <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <div class="p-4 rounded-2xl bg-blue-50 border-2 border-blue-200">
+            <div class="flex items-center gap-2 text-blue-950 font-black text-sm mb-1">
+              <span>💧</span> 1. Hydrocarbon là gì?
+            </div>
+            <p class="text-blue-900 text-xs sm:text-sm leading-relaxed">
+              Là hợp chất hữu cơ mà phân tử <b>chỉ chứa hai nguyên tố carbon (C) và hydrogen (H)</b>. Ví dụ: alkane, alkene,...
+            </p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-200">
+            <div class="flex items-center gap-2 text-emerald-950 font-black text-sm mb-1">
+              <span>🌿</span> 2. Alkane là gì?
+            </div>
+            <p class="text-emerald-900 text-xs sm:text-sm leading-relaxed">
+              Alkane là những <b>hydrocarbon mạch hở</b>, trong phân tử <b>chỉ chứa các liên kết đơn</b>.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- HOẠT ĐỘNG TƯƠNG TÁC 1: THỢ SĂN HYDROCARBON & ALKANE      -->
+      <!-- ========================================================= -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 bg-white border border-slate-200 shadow-md">
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-black bg-purple-100 text-purple-800 px-3 py-1 rounded-full uppercase">Hoạt động 1</span>
+            <h3 class="text-lg sm:text-xl font-black text-slate-800">Thợ Săn Hydrocarbon & Alkane</h3>
+          </div>
+          <span class="text-xs text-amber-700 bg-amber-50 border border-amber-200 font-bold px-2.5 py-1 rounded-full">Phần thưởng: +20 XP ⭐</span>
+        </div>
+
+        <p class="text-xs sm:text-sm text-slate-600 mb-4">
+          Hãy phân loại 8 chất trong câu hỏi thảo luận mục I (SGK Trang 104) vào 3 nhóm giỏ tương ứng:
+        </p>
+
+        <!-- Danh sách chất -->
+        <div class="mb-5 p-4 bg-slate-50 rounded-2xl border border-slate-200">
+          <div class="text-xs font-black text-slate-500 mb-2">BẤM CHỌN CHẤT CẦN XẾP:</div>
+          <div id="classifier-pool" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- 3 Giỏ phân loại -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5" id="classifier-bins">
+          
+          <div onclick="putSelectedInBin('alkane')" class="classifier-bin border-2 border-emerald-400 bg-emerald-50/50 rounded-2xl p-4 min-h-[130px] cursor-pointer hover:border-emerald-600 transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between font-black text-emerald-900 text-xs mb-2">
+                <span>🟢 Alkane (Mạch hở, LK đơn)</span>
+                <span id="bin-count-alkane" class="bg-emerald-200 px-2 py-0.5 rounded-full">0/3</span>
+              </div>
+              <div id="bin-items-alkane" class="flex flex-wrap gap-1.5 min-h-[40px]"></div>
+            </div>
+            <div class="text-[10px] text-emerald-700 font-bold text-center mt-2">Bấm vào đây để xếp vào Alkane ⬇️</div>
+          </div>
+
+          <div onclick="putSelectedInBin('other-hc')" class="classifier-bin border-2 border-amber-400 bg-amber-50/50 rounded-2xl p-4 min-h-[130px] cursor-pointer hover:border-amber-600 transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between font-black text-amber-900 text-xs mb-2">
+                <span>🟠 Hydrocarbon khác (Có LK đôi)</span>
+                <span id="bin-count-other-hc" class="bg-amber-200 px-2 py-0.5 rounded-full">0/3</span>
+              </div>
+              <div id="bin-items-other-hc" class="flex flex-wrap gap-1.5 min-h-[40px]"></div>
+            </div>
+            <div class="text-[10px] text-amber-700 font-bold text-center mt-2">Bấm vào đây để xếp vào Hydrocarbon khác ⬇️</div>
+          </div>
+
+          <div onclick="putSelectedInBin('non-hc')" class="classifier-bin border-2 border-rose-400 bg-rose-50/50 rounded-2xl p-4 min-h-[130px] cursor-pointer hover:border-rose-600 transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between font-black text-rose-900 text-xs mb-2">
+                <span>🔴 Không phải Hydrocarbon (Có O)</span>
+                <span id="bin-count-non-hc" class="bg-rose-200 px-2 py-0.5 rounded-full">0/2</span>
+              </div>
+              <div id="bin-items-non-hc" class="flex flex-wrap gap-1.5 min-h-[40px]"></div>
+            </div>
+            <div class="text-[10px] text-rose-700 font-bold text-center mt-2">Bấm vào đây để xếp vào Không phải Hydrocarbon ⬇️</div>
+          </div>
+
+        </div>
+
+        <div class="mt-4 flex items-center justify-between flex-wrap gap-3">
+          <div class="flex gap-2">
+            <button onclick="checkClassification(this)" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl shadow-md transition active:scale-95 text-xs flex items-center gap-1.5">
+              <span>✅ Kiểm tra kết quả</span>
+            </button>
+            <button onclick="resetClassification()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition text-xs">
+              <span>🔄 Xếp lại</span>
+            </button>
+          </div>
+          <div id="classifier-result" class="text-xs sm:text-sm font-bold"></div>
+        </div>
+
+      </div>
+
+      <!-- Điều hướng -->
+      <div class="flex justify-between pt-1">
+        <button onclick="switchTab('tab-intro')" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 font-bold hover:bg-white text-xs">
+          ⬅ Khởi động
+        </button>
+        <button onclick="switchTab('tab-structure')" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black hover:shadow-lg transition flex items-center gap-2 active:scale-95 text-sm">
+          <span>Sang Chặng 3: Cấu tạo & Tên gọi (C1-C4)</span>
+          <span>➔</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 3. CẤU TẠO PHÂN TỬ & TÊN GỌI (C1 - C4)    -->
+    <!-- ========================================== -->
+    <section id="tab-structure" class="tab-content hidden space-y-5">
+      
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <span class="text-xs font-black uppercase tracking-wider text-teal-700 bg-teal-100 px-3 py-1 rounded-full">Phần II (SGK T104)</span>
+          <h2 class="text-2xl font-black text-slate-900 mt-1">Cấu Tạo Phân Tử & Danh Pháp Của Alkane</h2>
+        </div>
+        <span class="text-xs bg-slate-100 text-slate-600 font-bold px-3 py-1 rounded-full border border-slate-200">Từ C1 đến C4 (Bảng 23.1)</span>
+      </div>
+
+      <!-- Thẻ tương tác 4 chất đầu dãy -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 bg-white border border-slate-200 shadow-md">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-3 border-b border-slate-100">
+          <div>
+            <h3 class="text-base sm:text-lg font-black text-slate-800">Khám phá 4 Alkane cơ bản (C1 – C4)</h3>
+            <p class="text-xs text-slate-500">Bấm từng thẻ để xem chi tiết liên kết cộng hóa trị!</p>
+          </div>
+          <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-extrabold text-slate-600 self-start">
+            <button id="view-mode-full" onclick="setStructureView('full')" class="px-3 py-1 rounded-lg bg-white text-emerald-700 shadow-xs transition">CTCT Đầy đủ</button>
+            <button id="view-mode-condensed" onclick="setStructureView('condensed')" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition">CTCT Thu gọn</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="alkane-cards-container">
+          
+          <!-- C1 -->
+          <div onclick="selectAlkane(1)" id="card-c1" class="alkane-card border-2 border-emerald-500 bg-emerald-50/60 rounded-2xl p-4 text-center cursor-pointer transition transform hover:-translate-y-1 shadow-xs">
+            <span class="inline-block bg-emerald-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full mb-1">C1</span>
+            <h4 class="text-lg font-black text-slate-800">Methane</h4>
+            <div class="text-sm font-black text-emerald-700 my-1 font-mono">CH₄</div>
+            
+            <div class="h-24 flex items-center justify-center my-2 bg-white rounded-xl border border-emerald-100 p-1">
+              <div class="structure-full">
+                <svg viewBox="0 0 80 80" class="w-16 h-16">
+                  <line x1="40" y1="40" x2="40" y2="15" stroke="#059669" stroke-width="2"/>
+                  <line x1="40" y1="40" x2="40" y2="65" stroke="#059669" stroke-width="2"/>
+                  <line x1="40" y1="40" x2="15" y2="40" stroke="#059669" stroke-width="2"/>
+                  <line x1="40" y1="40" x2="65" y2="40" stroke="#059669" stroke-width="2"/>
+                  <circle cx="40" cy="40" r="10" fill="#0f172a"/><text x="40" y="44" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">C</text>
+                  <circle cx="40" cy="15" r="6" fill="#38bdf8"/><text x="40" y="18" fill="#fff" font-size="7" font-weight="bold" text-anchor="middle">H</text>
+                  <circle cx="40" cy="65" r="6" fill="#38bdf8"/><text x="40" y="68" fill="#fff" font-size="7" font-weight="bold" text-anchor="middle">H</text>
+                  <circle cx="15" cy="40" r="6" fill="#38bdf8"/><text x="15" y="43" fill="#fff" font-size="7" font-weight="bold" text-anchor="middle">H</text>
+                  <circle cx="65" cy="40" r="6" fill="#38bdf8"/><text x="65" y="43" fill="#fff" font-size="7" font-weight="bold" text-anchor="middle">H</text>
+                </svg>
+              </div>
+              <div class="structure-condensed hidden font-mono font-black text-slate-800 text-base">CH₄</div>
+            </div>
+            <span class="text-[11px] font-bold text-slate-500">M = 16 g/mol</span>
+          </div>
+
+          <!-- C2 -->
+          <div onclick="selectAlkane(2)" id="card-c2" class="alkane-card border-2 border-slate-200 bg-white rounded-2xl p-4 text-center cursor-pointer transition transform hover:-translate-y-1 shadow-xs">
+            <span class="inline-block bg-teal-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full mb-1">C2</span>
+            <h4 class="text-lg font-black text-slate-800">Ethane</h4>
+            <div class="text-sm font-black text-teal-700 my-1 font-mono">C₂H₆</div>
+            
+            <div class="h-24 flex items-center justify-center my-2 bg-slate-50 rounded-xl border border-slate-100 p-1">
+              <div class="structure-full">
+                <svg viewBox="0 0 100 80" class="w-20 h-16">
+                  <line x1="35" y1="40" x2="65" y2="40" stroke="#0d9488" stroke-width="2"/>
+                  <circle cx="35" cy="40" r="9" fill="#0f172a"/><text x="35" y="43" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">C</text>
+                  <circle cx="65" cy="40" r="9" fill="#0f172a"/><text x="65" y="43" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">C</text>
+                  <circle cx="15" cy="40" r="4.5" fill="#38bdf8"/><circle cx="35" cy="15" r="4.5" fill="#38bdf8"/><circle cx="35" cy="65" r="4.5" fill="#38bdf8"/>
+                  <circle cx="85" cy="40" r="4.5" fill="#38bdf8"/><circle cx="65" cy="15" r="4.5" fill="#38bdf8"/><circle cx="65" cy="65" r="4.5" fill="#38bdf8"/>
+                </svg>
+              </div>
+              <div class="structure-condensed hidden font-mono font-black text-slate-800 text-xs">CH₃—CH₃</div>
+            </div>
+            <span class="text-[11px] font-bold text-slate-500">M = 30 g/mol</span>
+          </div>
+
+          <!-- C3 -->
+          <div onclick="selectAlkane(3)" id="card-c3" class="alkane-card border-2 border-slate-200 bg-white rounded-2xl p-4 text-center cursor-pointer transition transform hover:-translate-y-1 shadow-xs">
+            <span class="inline-block bg-sky-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full mb-1">C3</span>
+            <h4 class="text-lg font-black text-slate-800">Propane</h4>
+            <div class="text-sm font-black text-sky-700 my-1 font-mono">C₃H₈</div>
+            
+            <div class="h-24 flex items-center justify-center my-2 bg-slate-50 rounded-xl border border-slate-100 p-1">
+              <div class="structure-full">
+                <svg viewBox="0 0 110 80" class="w-24 h-16">
+                  <line x1="25" y1="40" x2="55" y2="40" stroke="#0284c7" stroke-width="2"/>
+                  <line x1="55" y1="40" x2="85" y2="40" stroke="#0284c7" stroke-width="2"/>
+                  <circle cx="25" cy="40" r="8" fill="#0f172a"/><text x="25" y="43" fill="#fff" font-size="7" font-weight="bold" text-anchor="middle">C</text>
+                  <circle cx="55" cy="40" r="8" fill="#0f172a"/><text x="55" y="43" fill="#fff" font-size="7" font-weight="bold" text-anchor="middle">C</text>
+                  <circle cx="85" cy="40" r="8" fill="#0f172a"/><text x="85" y="43" fill="#fff" font-size="7" font-weight="bold" text-anchor="middle">C</text>
+                  <circle cx="10" cy="40" r="4" fill="#38bdf8"/><circle cx="25" cy="18" r="4" fill="#38bdf8"/><circle cx="25" cy="62" r="4" fill="#38bdf8"/>
+                  <circle cx="55" cy="18" r="4" fill="#38bdf8"/><circle cx="55" cy="62" r="4" fill="#38bdf8"/>
+                  <circle cx="85" cy="18" r="4" fill="#38bdf8"/><circle cx="85" cy="62" r="4" fill="#38bdf8"/><circle cx="100" cy="40" r="4" fill="#38bdf8"/>
+                </svg>
+              </div>
+              <div class="structure-condensed hidden font-mono font-black text-slate-800 text-[11px]">CH₃—CH₂—CH₃</div>
+            </div>
+            <span class="text-[11px] font-bold text-slate-500">M = 44 g/mol</span>
+          </div>
+
+          <!-- C4 -->
+          <div onclick="selectAlkane(4)" id="card-c4" class="alkane-card border-2 border-slate-200 bg-white rounded-2xl p-4 text-center cursor-pointer transition transform hover:-translate-y-1 shadow-xs">
+            <span class="inline-block bg-indigo-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full mb-1">C4</span>
+            <h4 class="text-lg font-black text-slate-800">Butane</h4>
+            <div class="text-sm font-black text-indigo-700 my-1 font-mono">C₄H₁₀</div>
+            
+            <div class="h-24 flex items-center justify-center my-2 bg-slate-50 rounded-xl border border-slate-100 p-1">
+              <div class="structure-full">
+                <svg viewBox="0 0 120 80" class="w-28 h-16">
+                  <line x1="20" y1="40" x2="45" y2="40" stroke="#4f46e5" stroke-width="1.8"/>
+                  <line x1="45" y1="40" x2="70" y2="40" stroke="#4f46e5" stroke-width="1.8"/>
+                  <line x1="70" y1="40" x2="95" y2="40" stroke="#4f46e5" stroke-width="1.8"/>
+                  <circle cx="20" cy="40" r="7" fill="#0f172a"/><circle cx="45" cy="40" r="7" fill="#0f172a"/>
+                  <circle cx="70" cy="40" r="7" fill="#0f172a"/><circle cx="95" cy="40" r="7" fill="#0f172a"/>
+                  <circle cx="8" cy="40" r="3.5" fill="#818cf8"/><circle cx="20" cy="20" r="3.5" fill="#818cf8"/><circle cx="20" cy="60" r="3.5" fill="#818cf8"/>
+                  <circle cx="45" cy="20" r="3.5" fill="#818cf8"/><circle cx="45" cy="60" r="3.5" fill="#818cf8"/>
+                  <circle cx="70" cy="20" r="3.5" fill="#818cf8"/><circle cx="70" cy="60" r="3.5" fill="#818cf8"/>
+                  <circle cx="95" cy="20" r="3.5" fill="#818cf8"/><circle cx="95" cy="60" r="3.5" fill="#818cf8"/><circle cx="107" cy="40" r="3.5" fill="#818cf8"/>
+                </svg>
+              </div>
+              <div class="structure-condensed hidden font-mono font-black text-slate-800 text-[10px]">CH₃—(CH₂)₂—CH₃</div>
+            </div>
+            <span class="text-[11px] font-bold text-slate-500">M = 58 g/mol</span>
+          </div>
+
+        </div>
+
+        <!-- Khung giải thích quy luật & CTTQ -->
+        <div class="mt-5 bg-gradient-to-r from-emerald-50 via-teal-50 to-sky-50 rounded-2xl p-4 border border-emerald-200">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+            <div class="flex items-start gap-2.5">
+              <span class="text-xl">📈</span>
+              <div>
+                <h5 class="font-black text-slate-800 text-xs">Quy luật số nguyên tử H:</h5>
+                <p class="text-[11px] text-slate-600 mt-0.5 leading-relaxed">
+                  Tăng <b>1 nguyên tử C</b> thì số H <b>tăng thêm 2</b>. Hơn kém nhau một hay nhiều nhóm <b>-CH₂-</b>.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-2.5">
+              <span class="text-xl">📐</span>
+              <div>
+                <h5 class="font-black text-slate-800 text-xs">Công thức chung (CTTQ):</h5>
+                <p class="text-xs text-emerald-900 font-black mt-0.5 font-mono bg-white/90 px-2 py-0.5 rounded inline-block border border-emerald-300">
+                  C<sub>n</sub>H<sub>2n+2</sub> (n ≥ 1)
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-2.5">
+              <span class="text-xl">💡</span>
+              <div>
+                <h5 class="font-black text-slate-800 text-xs">Mẹo ghi nhớ tên gọi:</h5>
+                <p class="text-xs text-amber-900 font-black mt-0.5 bg-amber-100/90 px-2 py-0.5 rounded border border-amber-300">
+                  <span class="text-rose-600">M</span>ẹ <span class="text-rose-600">E</span>m <span class="text-rose-600">P</span>hải <span class="text-rose-600">B</span>ón...
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- HOẠT ĐỘNG TƯƠNG TÁC 2: GHÉP CẶP DANH PHÁP & CTPT         -->
+      <!-- ========================================================= -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 bg-white border border-slate-200 shadow-md">
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-black bg-teal-100 text-teal-800 px-3 py-1 rounded-full uppercase">Hoạt động 2</span>
+            <h3 class="text-lg sm:text-xl font-black text-slate-800">Ghép Cặp Trí Nhớ: Tên Gọi & Cấu Tạo</h3>
+          </div>
+          <span class="text-xs text-amber-700 bg-amber-50 border border-amber-200 font-bold px-2.5 py-1 rounded-full">Phần thưởng: +20 XP ⭐</span>
+        </div>
+
+        <p class="text-xs sm:text-sm text-slate-600 mb-4">
+          Bấm 1 thẻ Tên bên trái và 1 thẻ Công thức bên phải để ghép đôi chính xác:
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto" id="matching-game-area">
+          <div class="space-y-2.5" id="match-col-names"></div>
+          <div class="space-y-2.5" id="match-col-formulas"></div>
+        </div>
+
+        <div id="matching-feedback" class="mt-3 text-center font-bold text-xs sm:text-sm min-h-[22px]"></div>
+
+        <div class="mt-3 flex justify-center">
+          <button onclick="initMatchingActivity()" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
+            🔄 Trộn lại thẻ
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Điều hướng -->
+      <div class="flex justify-between pt-1">
+        <button onclick="switchTab('tab-concept')" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 font-bold hover:bg-white text-xs">
+          ⬅ Khái niệm
+        </button>
+        <button onclick="switchTab('tab-lab')" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black hover:shadow-lg transition flex items-center gap-2 active:scale-95 text-sm">
+          <span>Sang Chặng 4: Thí nghiệm ảo đốt Butane</span>
+          <span>➔</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 4. THÍ NGHIỆM ẢO: PHẢN ỨNG CHÁY CỦA ALKANE -->
+    <!-- ========================================== -->
+    <section id="tab-lab" class="tab-content hidden space-y-5">
+      
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <span class="text-xs font-black uppercase tracking-wider text-orange-600 bg-orange-100 px-3 py-1 rounded-full">Phần III (SGK T104)</span>
+          <h2 class="text-2xl font-black text-slate-900 mt-1">Phản Ứng Cháy Của Alkane - Phòng Thí Nghiệm Ảo</h2>
+        </div>
+        <span class="text-xs bg-slate-100 text-slate-600 font-bold px-3 py-1 rounded-full border border-slate-200">Hình 23.2 SGK</span>
+      </div>
+
+      <!-- PHÒNG THÍ NGHIỆM ẢO -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 bg-white border border-slate-200 shadow-md">
+        
+        <div class="flex flex-col lg:flex-row gap-6 items-center">
+          
+          <!-- SÂN KHẤU MÔ PHỎNG ĐỘNG -->
+          <div class="w-full lg:w-7/12 bg-slate-900 rounded-3xl p-5 relative overflow-hidden flex flex-col items-center justify-between min-h-[350px] shadow-2xl border-4 border-slate-800">
+            <div class="w-full flex items-center justify-between z-10">
+              <span class="text-[11px] font-mono font-bold text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-800">
+                LAB VIRTUAL • BUTANE (C₄H₁₀)
+              </span>
+              <span id="lab-step-indicator" class="text-[11px] font-bold text-amber-300 bg-amber-950/80 px-2.5 py-0.5 rounded-full border border-amber-800">
+                Bước 1: Chuẩn bị
+              </span>
+            </div>
+
+            <!-- Vùng đồ họa SVG mô phỏng Hình 23.2 -->
+            <div class="relative w-full h-56 flex items-center justify-center z-10 my-1">
+              
+              <!-- Giá đỡ thí nghiệm -->
+              <div class="absolute left-1/2 -translate-x-1/2 w-48 h-full pointer-events-none">
+                <div class="absolute left-8 top-3 bottom-3 w-2 bg-slate-600 rounded"></div>
+                <div class="absolute left-8 top-12 w-16 h-2 bg-slate-500 rounded"></div>
+              </div>
+
+              <!-- Bình tam giác úp ngược -->
+              <div id="flask-container" class="relative transition-all duration-700 transform flex flex-col items-center">
+                <svg id="flask-svg" width="120" height="140" viewBox="0 0 130 150">
+                  <path id="flask-body" d="M 50 10 L 80 10 L 80 35 L 120 125 A 10 10 0 0 1 110 140 L 20 140 A 10 10 0 0 1 10 125 L 50 35 Z" 
+                        fill="rgba(255, 255, 255, 0.15)" stroke="#94a3b8" stroke-width="3" />
+                  
+                  <!-- Hơi nước bám mờ thành bình -->
+                  <g id="flask-steam" class="opacity-0 transition-opacity duration-700">
+                    <ellipse cx="65" cy="80" rx="35" ry="40" fill="rgba(224, 242, 254, 0.45)" filter="blur(3px)" />
+                    <circle cx="50" cy="70" r="3" fill="#bae6fd" opacity="0.8"/>
+                    <circle cx="75" cy="85" r="3.5" fill="#bae6fd" opacity="0.8"/>
+                    <circle cx="60" cy="100" r="2.5" fill="#bae6fd" opacity="0.8"/>
+                    <text x="65" y="110" fill="#38bdf8" font-size="9" font-weight="bold" text-anchor="middle">Hơi nước (H₂O) đọng mờ</text>
+                  </g>
+
+                  <!-- Nước vôi trong đục trắng -->
+                  <g id="flask-liquid" class="opacity-0 transition-opacity duration-700">
+                    <path id="liquid-color" d="M 22 135 L 108 135 L 100 110 L 30 110 Z" fill="rgba(241, 245, 249, 0.3)" />
+                    <text id="liquid-label" x="65" y="125" fill="#f8fafc" font-size="8" font-weight="bold" text-anchor="middle">Ca(OH)₂</text>
+                  </g>
+                </svg>
+              </div>
+
+              <!-- Bật lửa gas dài -->
+              <div id="lighter-container" class="absolute bottom-1 left-1/2 -translate-x-1/2 transition-all duration-500 flex flex-col items-center">
+                <div id="flame-element" class="opacity-0 transition-all duration-300 flex flex-col items-center -mb-1 flame-anim">
+                  <div class="w-3.5 h-8 bg-gradient-to-t from-cyan-400 via-amber-400 to-orange-500 rounded-full blur-[1px] shadow-[0_0_15px_#f97316]"></div>
+                </div>
+                <div class="w-3.5 h-10 bg-slate-300 rounded-t-sm border border-slate-400"></div>
+                <div class="w-7 h-14 bg-gradient-to-b from-emerald-500 to-teal-700 rounded-b-xl border border-emerald-400 flex items-center justify-center shadow-md">
+                  <span class="text-[7px] font-black text-white rotate-90">BUTANE</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Dòng trạng thái quan sát -->
+            <div id="lab-observation-box" class="w-full bg-slate-800/90 rounded-xl p-2.5 border border-slate-700 text-center text-[11px] text-slate-300 font-mono z-10">
+              Nhấn nút Thao tác 1 để đánh lửa butane và quan sát thành bình!
+            </div>
+          </div>
+
+          <!-- BẢNG ĐIỀU KHIỂN & CÂU HỎI QUAN SÁT -->
+          <div class="w-full lg:w-5/12 space-y-3.5">
+            <h4 class="font-black text-slate-800 text-sm flex items-center gap-2">
+              <span>📋</span> Thao tác thực nghiệm (Hình 23.2):
+            </h4>
+            
+            <button id="lab-btn-step1" onclick="runLabStep(1, this)" class="w-full p-3 rounded-2xl border-2 border-orange-300 bg-orange-50 hover:bg-orange-100 font-bold text-left text-slate-800 transition flex items-center gap-3">
+              <span class="w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-black flex-shrink-0">1</span>
+              <div>
+                <div class="text-xs font-black text-orange-950">Châm lửa đốt Butane & Úp bình</div>
+                <div class="text-[10px] text-orange-700">Đưa đầu bật lửa vào miệng bình tam giác úp ngược</div>
+              </div>
+            </button>
+
+            <button id="lab-btn-step2" onclick="runLabStep(2, this)" disabled class="w-full p-3 rounded-2xl border-2 border-slate-200 bg-slate-50 opacity-60 font-bold text-left text-slate-800 transition flex items-center gap-3 cursor-not-allowed">
+              <span class="w-7 h-7 rounded-full bg-slate-400 text-white flex items-center justify-center text-xs font-black flex-shrink-0">2</span>
+              <div>
+                <div class="text-xs font-black text-slate-800">Rót nước vôi trong & Lắc đều</div>
+                <div class="text-[10px] text-slate-500">Quay xuôi bình, cho dung dịch Ca(OH)₂ vào và lắc</div>
+              </div>
+            </button>
+
+            <button onclick="resetLab()" class="text-[11px] text-slate-500 hover:text-slate-800 font-bold underline pl-1">
+              🔄 Thiết lập lại thí nghiệm
+            </button>
+
+            <!-- Khung câu hỏi suy luận của thí nghiệm -->
+            <div id="lab-quiz-area" class="hidden p-3.5 rounded-2xl bg-amber-50 border border-amber-200 space-y-2.5">
+              <div class="text-[11px] font-black text-amber-900 uppercase">
+                ❓ Rút ra kiến thức (SGK):
+              </div>
+              <p id="lab-question-text" class="text-xs font-bold text-slate-800"></p>
+              <div id="lab-quiz-options" class="space-y-1.5"></div>
+              <div id="lab-quiz-feedback" class="hidden text-xs font-bold p-2 rounded-xl"></div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- PHƯƠNG TRÌNH HÓA HỌC CHUẨN SGK -->
+        <div class="mt-6 border-t border-slate-200 pt-5">
+          <h4 class="text-base font-black text-slate-800 mb-2.5 flex items-center gap-2">
+            <span>⚗️</span> Kết luận & Phương trình phản ứng cháy của Alkane:
+          </h4>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
+              <div class="text-[11px] font-bold text-slate-500 uppercase mb-1">Phương trình đốt cháy Butane:</div>
+              <div class="font-mono text-emerald-800 font-black text-sm bg-white p-2 rounded-xl border border-emerald-200 overflow-x-auto">
+                2C₄H₁₀ + 13O₂ <span class="text-red-500">⟶(t°)</span> 8CO₂ + 10H₂O
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1"><i>(Hoặc: C₄H₁₀ + 13/2 O₂ ⟶ 4CO₂ + 5H₂O)</i></p>
+            </div>
+
+            <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
+              <div class="text-[11px] font-bold text-slate-500 uppercase mb-1">Phương trình tổng quát của Alkane:</div>
+              <div class="font-mono text-teal-800 font-black text-sm bg-white p-2 rounded-xl border border-teal-200 overflow-x-auto">
+                C<sub>n</sub>H<sub>2n+2</sub> + <span class="text-amber-600 font-bold">(3n+1)/2</span> O₂ <span class="text-red-500">⟶(t°)</span> nCO₂ + (n+1)H₂O
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">Phản ứng tỏa nhiệt rất lớn $\rightarrow$ làm nhiên liệu lý tưởng!</p>
+            </div>
+          </div>
+
+          <div class="mt-3 p-3 rounded-2xl bg-rose-50 border border-rose-200 flex items-start gap-2.5">
+            <span class="text-lg">⚠️</span>
+            <div class="text-[11px] text-rose-900 leading-relaxed">
+              <b>Cảnh báo an toàn (SGK):</b> Khi thiếu oxy, alkane cháy không hoàn toàn tạo <b>muội than (C)</b> và khí độc cực mạnh <b>carbon monoxide (CO)</b> gây ngộ độc và tử vong khi dùng bếp than, máy nổ trong phòng kín!
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- HOẠT ĐỘNG TƯƠNG TÁC 3: CÂN BẰNG PHƯƠNG TRÌNH PHẢN ỨNG    -->
+      <!-- ========================================================= -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 bg-white border border-slate-200 shadow-md">
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-black bg-orange-600 text-white px-3 py-1 rounded-full uppercase">Hoạt động 3</span>
+            <h3 class="text-lg sm:text-xl font-black text-slate-800">Thử Thách: Cân Bằng Phương Trình Phản Ứng Cháy</h3>
+          </div>
+          <span class="text-xs text-amber-700 bg-amber-50 border border-amber-200 font-bold px-2.5 py-1 rounded-full">Phần thưởng: +30 XP ⭐</span>
+        </div>
+
+        <div class="space-y-4">
+          
+          <!-- PTHH 1: CH4 -->
+          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="text-xs font-bold text-slate-600 mb-2">1. Phản ứng đốt cháy Methane:</div>
+            <div class="flex flex-wrap items-center gap-2 font-mono font-black text-sm sm:text-base">
+              <span class="bg-slate-200 px-2.5 py-1 rounded-lg">1 CH₄</span>
+              <span>+</span>
+              <div class="flex items-center gap-1 bg-white border-2 border-emerald-400 rounded-lg px-2 py-0.5">
+                <button onclick="adjustCoeff('eq1-o2', -1)" class="w-5 h-5 bg-slate-100 rounded text-xs font-black">-</button>
+                <span id="eq1-o2" class="w-5 text-center text-emerald-700 font-black">1</span>
+                <button onclick="adjustCoeff('eq1-o2', 1)" class="w-5 h-5 bg-slate-100 rounded text-xs font-black">+</button>
+              </div>
+              <span>O₂</span>
+              <span class="text-red-500">⟶(t°)</span>
+              <div class="flex items-center gap-1 bg-white border-2 border-emerald-400 rounded-lg px-2 py-0.5">
+                <button onclick="adjustCoeff('eq1-co2', -1)" class="w-5 h-5 bg-slate-100 rounded text-xs font-black">-</button>
+                <span id="eq1-co2" class="w-5 text-center text-emerald-700 font-black">1</span>
+                <button onclick="adjustCoeff('eq1-co2', 1)" class="w-5 h-5 bg-slate-100 rounded text-xs font-black">+</button>
+              </div>
+              <span>CO₂</span>
+              <span>+</span>
+              <div class="flex items-center gap-1 bg-white border-2 border-emerald-400 rounded-lg px-2 py-0.5">
+                <button onclick="adjustCoeff('eq1-h2o', -1)" class="w-5 h-5 bg-slate-100 rounded text-xs font-black">-</button>
+                <span id="eq1-h2o" class="w-5 text-center text-emerald-700 font-black">1</span>
+                <button onclick="adjustCoeff('eq1-h2o', 1)" class="w-5 h-5 bg-slate-100 rounded text-xs font-black">+</button>
+              </div>
+              <span>H₂O</span>
+            </div>
+            <div class="mt-2.5 flex items-center gap-2.5">
+              <button onclick="checkEquation1(this)" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl transition">
+                Kiểm tra PTHH 1
+              </button>
+              <span id="eq1-feedback" class="text-xs font-bold"></span>
+            </div>
+          </div>
+
+          <!-- PTHH 2: C3H8 -->
+          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="text-xs font-bold text-slate-600 mb-2">2. Phản ứng đốt cháy Propane:</div>
+            <div class="flex flex-wrap items-center gap-2 font-mono font-black text-sm sm:text-base">
+              <span class="bg-slate-200 px-2.5 py-1 rounded-lg">1 C₃H₈</span>
+              <span>+</span>
+              <div class="flex items-center gap-1 bg-white border-2 border-teal-400 rounded-lg px-2 py-0.5">
+                <button onclick="adjustCoeff('eq2-o2', -1)" class="w-5 h-5 bg-slate-100 rounded text-xs font-black">-</button>
+                <span id="eq2-o2" class="w-5 text-center text-teal-700 font-black">1</span>
+                <button onclick="adjustCoeff('eq2-o2', 1)" class="w-5 h-5 bg-slate-100 rounded text-xs font-black">+</button>
+              </div>
+              <span>O₂</span>
+              <span class="text-red-500">⟶(t°)</span>
+              <div class="flex items-center gap-1 bg-white border-2 border-teal-400 rounded-lg px-2 py-0.5">
+                <button onclick="adjustCoeff('eq2-co2', -1)" class="w-5 h-5 bg-slate-100 rounded text-xs font-black">-</button>
+                <span id="eq2-co2" class="w-5 text-center text-teal-700 font-black">1</span>
+                <button onclick="adjustCoeff('eq2-co2', 1)" class="w-5 h-5 bg-slate-100 rounded text-xs font-black">+</button>
+              </div>
+              <span>CO₂</span>
+              <span>+</span>
+              <div class="flex items-center gap-1 bg-white border-2 border-teal-400 rounded-lg px-2 py-0.5">
+                <button onclick="adjustCoeff('eq2-h2o', -1)" class="w-5 h-5 bg-slate-100 rounded text-xs font-black">-</button>
+                <span id="eq2-h2o" class="w-5 text-center text-teal-700 font-black">1</span>
+                <button onclick="adjustCoeff('eq2-h2o', 1)" class="w-5 h-5 bg-slate-100 rounded text-xs font-black">+</button>
+              </div>
+              <span>H₂O</span>
+            </div>
+            <div class="mt-2.5 flex items-center gap-2.5">
+              <button onclick="checkEquation2(this)" class="px-3.5 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-black rounded-xl transition">
+                Kiểm tra PTHH 2
+              </button>
+              <span id="eq2-feedback" class="text-xs font-bold"></span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Điều hướng -->
+      <div class="flex justify-between pt-1">
+        <button onclick="switchTab('tab-structure')" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 font-bold hover:bg-white text-xs">
+          ⬅ Cấu tạo & Tên gọi
+        </button>
+        <button onclick="switchTab('tab-application')" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black hover:shadow-lg transition flex items-center gap-2 active:scale-95 text-sm">
+          <span>Sang Chặng 5: Ứng dụng & Năng lượng</span>
+          <span>➔</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 5. ỨNG DỤNG LÀM NHIÊN LIỆU CỦA ALKANE      -->
+    <!-- ========================================== -->
+    <section id="tab-application" class="tab-content hidden space-y-5">
+      
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <span class="text-xs font-black uppercase tracking-wider text-sky-700 bg-sky-100 px-3 py-1 rounded-full">Phần IV (SGK T105)</span>
+          <h2 class="text-2xl font-black text-slate-900 mt-1">Ứng Dụng Làm Nhiên Liệu Của Alkane</h2>
+        </div>
+        <span class="text-xs bg-slate-100 text-slate-600 font-bold px-3 py-1 rounded-full border border-slate-200">Bảng 23.2 SGK</span>
+      </div>
+
+      <!-- 3 Trạng thái nhiên liệu -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <div class="glass-card rounded-3xl p-5 bg-white border-2 border-sky-200 shadow-md flex flex-col justify-between hover:shadow-lg transition">
+          <div>
+            <div class="w-10 h-10 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-xl mb-3">💨</div>
+            <span class="text-[10px] font-black text-sky-700 uppercase">1. Khí hoá lỏng (LPG)</span>
+            <h3 class="text-base font-black text-slate-800 mt-0.5 mb-1.5">Propane & Butane</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Dễ hóa lỏng khi nén, dùng làm <b>nhiên liệu bật lửa gas, bình gas gia đình, bếp nướng dã ngoại...</b>
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
+            <span>Dạng khí nén</span><span class="text-base">🛢️</span>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-3xl p-5 bg-white border-2 border-amber-200 shadow-md flex flex-col justify-between hover:shadow-lg transition">
+          <div>
+            <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl mb-3">🚗</div>
+            <span class="text-[10px] font-black text-amber-700 uppercase">2. Nhiên liệu lỏng</span>
+            <h3 class="text-base font-black text-slate-800 mt-0.5 mb-1.5">Xăng, Dầu, Jet Fuel</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Alkane lỏng làm nhiên liệu cho <b>xe máy, ô tô, máy bay phản lực (jet fuel), máy phát điện...</b>
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
+            <span>Dạng lỏng</span><span class="text-base">⛽</span>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-3xl p-5 bg-white border-2 border-emerald-200 shadow-md flex flex-col justify-between hover:shadow-lg transition">
+          <div>
+            <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl mb-3">🕯️</div>
+            <span class="text-[10px] font-black text-emerald-700 uppercase">3. Nhiên liệu rắn</span>
+            <h3 class="text-base font-black text-slate-800 mt-0.5 mb-1.5">Nến Paraffin (Sáp)</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Alkane mạch dài ở thể rắn dùng làm <b>nến thắp sáng paraffin, sáp chống thấm, sáp bảo vệ...</b>
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
+            <span>Dạng sáp rắn</span><span class="text-base">✨</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bảng tính toán so sánh nhiệt lượng 1 gam -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 bg-white border border-slate-200 shadow-md">
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+          <div>
+            <span class="text-xs font-black bg-amber-100 text-amber-800 px-3 py-1 rounded-full uppercase">Tính toán SGK</span>
+            <h3 class="text-lg font-black text-slate-800 mt-1">So Sánh Nhiệt Lượng Toả Ra Khi Đốt Cháy 1 Gam Alkane</h3>
+          </div>
+          <span class="text-xs text-slate-500 font-bold">kJ trên mỗi gam</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                <th class="p-2.5 font-black rounded-l-xl">Alkane</th>
+                <th class="p-2.5 font-black">CTPT</th>
+                <th class="p-2.5 font-black">M (g/mol)</th>
+                <th class="p-2.5 font-black">Nhiệt / 1 mol</th>
+                <th class="p-2.5 font-black text-emerald-700 rounded-r-xl">Nhiệt / 1 gam (kJ/g)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-semibold">
+              <tr class="bg-emerald-50/50">
+                <td class="p-2.5 font-black text-slate-900 flex items-center gap-1.5">
+                  <span>Methane</span> <span class="text-[10px] bg-emerald-600 text-white px-1.5 py-0.5 rounded-full font-black">Cao nhất! 🥇</span>
+                </td>
+                <td class="p-2.5 font-mono">CH₄</td>
+                <td class="p-2.5">16</td>
+                <td class="p-2.5">891 kJ</td>
+                <td class="p-2.5 font-black text-emerald-700 font-mono text-sm">
+                  891 ÷ 16 = <span class="bg-emerald-200/80 px-2 py-0.5 rounded">55.69 kJ/g</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-900">Ethane</td>
+                <td class="p-2.5 font-mono">C₂H₆</td>
+                <td class="p-2.5">30</td>
+                <td class="p-2.5">1 561 kJ</td>
+                <td class="p-2.5 font-mono">1561 ÷ 30 = 52.03 kJ/g</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-900">Propane</td>
+                <td class="p-2.5 font-mono">C₃H₈</td>
+                <td class="p-2.5">44</td>
+                <td class="p-2.5">2 220 kJ</td>
+                <td class="p-2.5 font-mono">2220 ÷ 44 = 50.45 kJ/g</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-900">Butane</td>
+                <td class="p-2.5 font-mono">C₄H₁₀</td>
+                <td class="p-2.5">58</td>
+                <td class="p-2.5">2 878 kJ</td>
+                <td class="p-2.5 font-mono">2878 ÷ 58 = 49.62 kJ/g</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-3.5 p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 font-medium">
+          👉 <b>Kết luận:</b> Đốt cháy 1 gam <b>Methane (CH₄)</b> toả ra nhiều nhiệt lượng nhất (~55.69 kJ/g). Vì vậy khí thiên nhiên và khí biogas là nguồn năng lượng rất sạch và hiệu suất cao!
+        </div>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- HOẠT ĐỘNG TƯƠNG TÁC 4: ĐÚNG / SAI ỨNG DỤNG               -->
+      <!-- ========================================================= -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 bg-white border border-slate-200 shadow-md">
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-black bg-sky-100 text-sky-800 px-3 py-1 rounded-full uppercase">Hoạt động 4</span>
+            <h3 class="text-lg sm:text-xl font-black text-slate-800">Thử Thách Nhanh: Đúng / Sai Ứng Dụng Alkane</h3>
+          </div>
+          <span class="text-xs text-amber-700 bg-amber-50 border border-amber-200 font-bold px-2.5 py-1 rounded-full">Phần thưởng: +20 XP ⭐</span>
+        </div>
+
+        <div class="space-y-3" id="tf-activity-container"></div>
+      </div>
+
+      <!-- Điều hướng -->
+      <div class="flex justify-between pt-1">
+        <button onclick="switchTab('tab-lab')" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 font-bold hover:bg-white text-xs">
+          ⬅ Thí nghiệm
+        </button>
+        <button onclick="switchTab('tab-challenge')" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-black hover:shadow-lg transition flex items-center gap-2 active:scale-95 text-sm shadow-md">
+          <span>Vào ĐẤU TRƯỜNG QUIZ! 🏆</span>
+          <span>➔</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 6. GAME CHALLENGE: ĐẤU TRƯỜNG ALKANE       -->
+    <!-- ========================================== -->
+    <section id="tab-challenge" class="tab-content hidden space-y-5">
+      
+      <!-- Banner Đấu Trường -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-700 text-white relative overflow-hidden shadow-xl">
+        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-5">
+          <div>
+            <div class="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-xs font-black uppercase mb-2">
+              🏆 ĐẤU TRƯỜNG QUIZ BATTLE
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-black">CHINH PHỤC ĐỈNH CAO ALKANE</h2>
+            <p class="text-purple-100 text-xs sm:text-sm mt-1 max-w-lg">
+              Bộ 8 câu hỏi thử thách năng lực. Đạt từ 70 điểm để mở khóa <b>Huy Hiệu Đại Kiện Tướng</b>!
+            </p>
+          </div>
+
+          <!-- Score Box -->
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-center min-w-[150px]">
+            <div class="text-[10px] font-black uppercase tracking-wider text-purple-200">Điểm Đấu Trường</div>
+            <div id="quiz-score-display" class="text-3xl sm:text-4xl font-black text-amber-300 my-0.5">0 / 80</div>
+            <div id="quiz-question-counter" class="text-xs font-bold text-white/80">Câu 1 trên 8</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KHUNG TRẮC NGHIỆM CHÍNH -->
+      <div id="quiz-main-card" class="glass-card rounded-3xl p-6 sm:p-8 bg-white border border-slate-200 shadow-md">
+        
+        <div class="w-full bg-slate-100 rounded-full h-2.5 mb-5 overflow-hidden">
+          <div id="quiz-progress-fill" class="bg-gradient-to-r from-indigo-500 to-pink-500 h-full rounded-full transition-all duration-300 w-[12.5%]"></div>
+        </div>
+
+        <div class="mb-5">
+          <div class="inline-block bg-indigo-100 text-indigo-800 text-xs font-black px-3 py-0.5 rounded-full uppercase mb-2" id="quiz-badge">
+            Câu hỏi 1
+          </div>
+          <h3 id="quiz-question-title" class="text-base sm:text-lg font-black text-slate-800 leading-snug"></h3>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5" id="quiz-options-container"></div>
+
+        <div id="quiz-feedback-box" class="hidden p-4 rounded-2xl mb-4 text-xs sm:text-sm font-bold transition-all"></div>
+
+        <div class="flex justify-end">
+          <button id="quiz-next-btn" onclick="nextQuizQuestion()" disabled class="px-6 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 active:scale-95 shadow-md text-xs sm:text-sm">
+            <span>Câu tiếp theo</span>
+            <span>➔</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- KẾT QUẢ CUỐI QUIZ -->
+      <div id="quiz-results-card" class="hidden glass-card rounded-3xl p-6 sm:p-10 bg-white border-2 border-emerald-300 shadow-xl text-center space-y-5">
+        <div class="w-16 h-16 mx-auto rounded-full bg-amber-100 border-4 border-amber-300 flex items-center justify-center text-3xl shadow-inner">
+          🎉
+        </div>
+
+        <div>
+          <h3 class="text-2xl font-black text-slate-800">Tuyệt Vời, <span class="player-name-text text-emerald-700">Nguyễn Văn An</span>!</h3>
+          <p id="quiz-final-evaluation" class="text-slate-600 text-sm mt-1 font-semibold"></p>
+        </div>
+
+        <div class="inline-block bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-7 py-3 rounded-2xl shadow-lg">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-100">Điểm Đấu Trường Đạt Được</div>
+          <div id="quiz-final-score-text" class="text-4xl font-black my-0.5">80 / 80</div>
+        </div>
+
+        <div class="flex items-center justify-center gap-3 flex-wrap pt-2">
+          <!-- NÚT CHƠI LẠI TRONG BẢNG KẾT QUẢ -->
+          <button onclick="restartQuiz()" class="px-5 py-2.5 rounded-xl border-2 border-slate-300 hover:bg-slate-50 font-black text-slate-700 text-xs transition active:scale-95 flex items-center gap-1.5">
+            <span>🔄</span> <span>Chơi Lại Đấu Trường</span>
+          </button>
+          <button onclick="switchTab('tab-summary')" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs hover:shadow-lg transition active:scale-95 shadow-md flex items-center gap-1.5">
+            <span>📜</span> <span>Nhận Bằng Khen & Xem Tổng Kết</span>
+          </button>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 7. TỔNG KẾT & NHẬN GIẤY CHỨNG NHẬN        -->
+    <!-- ========================================== -->
+    <section id="tab-summary" class="tab-content hidden space-y-5">
+      
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <span class="text-xs font-black uppercase tracking-wider text-purple-700 bg-purple-100 px-3 py-1 rounded-full">Tổng Kết & Bằng Khen</span>
+          <h2 class="text-2xl font-black text-slate-900 mt-1">Sơ Đồ Tư Duy & Bảng Vinh Danh</h2>
+        </div>
+        <button onclick="confirmRestartGame()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black text-xs transition active:scale-95 shadow-xs flex items-center gap-1.5">
+          <span>🔄</span> <span>Bắt đầu Chơi lại từ đầu</span>
+        </button>
+      </div>
+
+      <!-- BẢNG BỘ SƯU TẬP 5 HUY HIỆU -->
+      <div class="glass-card rounded-3xl p-6 bg-gradient-to-r from-amber-50 via-white to-purple-50 border-2 border-amber-300 shadow-md">
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🏆</span>
+            <h3 class="text-base sm:text-lg font-black text-slate-800">Bộ Sưu Tập 5 Huy Hiệu Thành Tích Của Em:</h3>
+          </div>
+          <span id="badge-summary-counter" class="text-xs font-black bg-amber-200 text-amber-900 px-3 py-1 rounded-full">0/5 Mở khóa</span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3" id="badge-collection-grid">
+          <!-- Render via JS -->
+        </div>
+      </div>
+
+      <!-- Sơ đồ tư duy 3 nhánh (Trang 105 SGK) -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 bg-white border border-slate-200 shadow-md">
+        <h3 class="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
+          <span>🧠</span> Sơ Đồ Tư Duy: "Em Đã Học" (Trang 105 SGK)
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200">
+            <div class="w-8 h-8 rounded-lg bg-blue-600 text-white font-black flex items-center justify-center text-sm mb-2">1</div>
+            <h4 class="font-black text-blue-950 text-sm mb-1.5">Hydrocarbon & Alkane</h4>
+            <ul class="text-xs text-blue-900 space-y-1.5 leading-relaxed font-semibold">
+              <li>• <b>Hydrocarbon:</b> Hợp chất hữu cơ chỉ chứa C và H.</li>
+              <li>• <b>Alkane:</b> Hydrocarbon mạch hở, <b>chỉ chứa các liên kết đơn</b>.</li>
+              <li>• <b>Công thức chung:</b> <code class="bg-blue-100 px-1 py-0.5 rounded font-bold">C<sub>n</sub>H<sub>2n+2</sub> (n ≥ 1)</code>.</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-teal-50 to-emerald-50 border-2 border-teal-200">
+            <div class="w-8 h-8 rounded-lg bg-teal-600 text-white font-black flex items-center justify-center text-sm mb-2">2</div>
+            <h4 class="font-black text-teal-950 text-sm mb-1.5">Cấu tạo & Tên gọi (C1-C4)</h4>
+            <ul class="text-xs text-teal-900 space-y-1.5 leading-relaxed font-semibold">
+              <li>• <b>C1:</b> Methane (CH₄) - Khí bùn ao, biogas.</li>
+              <li>• <b>C2:</b> Ethane (C₂H₆ / CH₃—CH₃).</li>
+              <li>• <b>C3:</b> Propane (C₃H₈ / CH₃—CH₂—CH₃).</li>
+              <li>• <b>C4:</b> Butane (C₄H₁₀ / CH₃—CH₂—CH₂—CH₃).</li>
+              <li>• <i>Mẹo nhớ: Mẹ Em Phải Bón...</i></li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-200">
+            <div class="w-8 h-8 rounded-lg bg-orange-600 text-white font-black flex items-center justify-center text-sm mb-2">3</div>
+            <h4 class="font-black text-orange-950 text-sm mb-1.5">Tính Chất Cháy & Ứng Dụng</h4>
+            <ul class="text-xs text-orange-900 space-y-1.5 leading-relaxed font-semibold">
+              <li>• Đốt cháy sinh ra CO₂ và H₂O, tỏa nhiều nhiệt.</li>
+              <li>• Khí hóa lỏng (LPG): Propane, butane (bếp gas).</li>
+              <li>• Nhiên liệu lỏng: Xăng dầu xe cộ, máy bay.</li>
+              <li>• Nhiên liệu rắn: Nến paraffin.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-4 p-3 rounded-2xl bg-purple-50 border border-purple-200 flex items-start gap-2.5">
+          <span class="text-xl">🌱</span>
+          <div>
+            <h5 class="font-black text-purple-900 text-xs sm:text-sm">Em có thể (Trang 105 SGK):</h5>
+            <p class="text-xs text-purple-800 mt-0.5 leading-relaxed font-medium">
+              Nêu được các ứng dụng quan trọng của alkane; biết cách <b>sử dụng nhiên liệu an toàn, tiết kiệm và phòng chống cháy nổ</b> trong gia đình và trường học!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- KHU VỰC CẤP GIẤY CHỨNG NHẬN HỌC SINH -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 bg-white border border-slate-200 shadow-md">
+        <h3 class="text-lg sm:text-xl font-black text-slate-800 mb-1 flex items-center gap-2">
+          <span>🎓</span> Giấy Chứng Nhận Hoàn Thành Xuất Sắc
+        </h3>
+        <p class="text-xs text-slate-500 mb-6">Bằng khen chính thức ghi nhận thành tích của em:</p>
+
+        <!-- BẢN IN GIẤY CHỨNG NHẬN -->
+        <div id="certificate-preview" class="border-8 border-double border-amber-600/40 rounded-3xl p-6 sm:p-8 bg-gradient-to-b from-amber-50/50 via-white to-amber-50/30 text-center relative max-w-2xl mx-auto shadow-2xl">
+          <div class="text-[10px] uppercase font-black tracking-widest text-amber-800 mb-1">
+            BỘ GIÁO DỤC VÀ ĐÀO TẠO • TRƯỜNG THCS
+          </div>
+          <h2 class="text-xl sm:text-2xl font-black tracking-tight text-amber-950 uppercase font-display">
+            GIẤY CHỨNG NHẬN HỌC TẬP
+          </h2>
+          <div class="text-[10px] text-amber-700 font-extrabold uppercase tracking-wider mt-0.5">
+            MÔN: KHOA HỌC TỰ NHIÊN 9 (BÀI 23: ALKANE)
+          </div>
+
+          <div class="my-5">
+            <span class="text-xs text-slate-500 font-semibold italic">Chứng nhận học sinh:</span>
+            <div id="cert-student-name" class="text-2xl sm:text-3xl font-black text-emerald-800 uppercase tracking-wide my-1">
+              NGUYỄN VĂN AN
+            </div>
+            <p class="text-xs text-slate-600 max-w-md mx-auto">
+              Đã xuất sắc hoàn thành tất cả các nhiệm vụ tương tác, thí nghiệm ảo và đạt thành tích cao trong Đấu trường Tri thức Alkane!
+            </p>
+          </div>
+
+          <div class="flex items-center justify-center gap-4 my-3 flex-wrap">
+            <div class="flex items-center gap-1.5 bg-white px-3 py-1 rounded-full border border-amber-200 shadow-xs">
+              <span>⭐</span>
+              <span class="text-xs font-bold text-slate-700">Điểm số: <b id="cert-points" class="text-emerald-700">100đ</b></span>
+            </div>
+            <div class="flex items-center gap-1.5 bg-white px-3 py-1 rounded-full border border-amber-200 shadow-xs">
+              <span>🎖️</span>
+              <span class="text-xs font-bold text-slate-700">Xếp loại: <b class="text-amber-700" id="cert-rank">Xuất Sắc</b></span>
+            </div>
+            <div class="flex items-center gap-1.5 bg-white px-3 py-1 rounded-full border border-amber-200 shadow-xs">
+              <span>📅</span>
+              <span id="cert-date" class="text-xs font-bold text-slate-700">10/11/2026</span>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-3 flex items-center justify-between text-xs text-slate-500 border-t border-amber-200/60 max-w-sm mx-auto">
+            <div class="text-center">
+              <div class="font-bold text-slate-700">Học sinh</div>
+              <div class="italic text-[10px] text-slate-400 mt-4">(Đã ký xác nhận)</div>
+            </div>
+            <div class="w-14 h-14 rounded-full border-2 border-red-500 text-red-600 flex flex-col items-center justify-center rotate-[-12deg] font-black text-[8px] uppercase leading-tight bg-red-50/50">
+              <span>KHTN 9</span>
+              <span>XUẤT SẮC</span>
+              <span>★ ★ ★</span>
+            </div>
+            <div class="text-center">
+              <div class="font-bold text-slate-700">Giáo viên KHTN</div>
+              <div class="font-serif italic text-emerald-800 font-bold mt-4">Thầy / Cô KHTN 9</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-5 flex justify-center gap-3">
+          <button onclick="window.print()" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-black text-xs shadow-md transition flex items-center gap-1.5 active:scale-95">
+            <span>🖨️ In hoặc Lưu Giấy Chứng Nhận (PDF)</span>
+          </button>
+          <!-- NÚT CHƠI LẠI TRÊN TRANG TỔNG KẾT -->
+          <button onclick="confirmRestartGame()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md transition flex items-center gap-1.5 active:scale-95">
+            <span>🔄 Chơi Lại Từ Đầu</span>
+          </button>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="mt-10 py-5 border-t border-slate-200 bg-white/60 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4">
+      <p class="font-black text-slate-700">BÀI 23: ALKANE - KHOA HỌC TỰ NHIÊN 9 (KẾT NỐI TRI THỨC VỚI CUỘC SỐNG)</p>
+      <p class="mt-1">Mini game học tập tương tác số • Thiết kế hiện đại, tương thích mọi thiết bị.</p>
+    </div>
+  </footer>
+
+  <canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-50 w-full h-full" style="display:none;"></canvas>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    /* ========================================================
+       1. GAME STATE & PLAYER PROFILE
+       ======================================================== */
+    const gameState = {
+      playerName: 'Nguyễn Văn An',
+      playerAvatar: '🧑‍🔬',
+      playerTitle: 'Thám tử Hóa học',
+      points: 0,
+      streak: 0,
+      badges: {
+        b1: { id: 'b1', name: 'Khởi Động Nhanh Nhẹn', icon: '🥉', desc: 'Giải mã chính xác câu hỏi mở màn SGK', unlocked: false, reward: 15 },
+        b2: { id: 'b2', name: 'Thợ Săn Hydrocarbon', icon: '🥈', desc: 'Phân loại chính xác 8 hợp chất hữu cơ', unlocked: false, reward: 20 },
+        b3: { id: 'b3', name: 'Bậc Thầy Phân Tử', icon: '🧬', desc: 'Ghép cặp hoàn hảo 4 Alkane C1–C4', unlocked: false, reward: 20 },
+        b4: { id: 'b4', name: 'Phù Thủy Ngọn Lửa', icon: '🔥', desc: 'Hoàn thành thí nghiệm ảo & cân bằng PTHH', unlocked: false, reward: 30 },
+        b5: { id: 'b5', name: 'Đại Kiện Tướng Alkane', icon: '👑', desc: 'Đạt từ 70/80 điểm Đấu Trường Quiz', unlocked: false, reward: 50 }
+      },
+      completedTasks: {
+        warmup: false,
+        classify: false,
+        structure: false,
+        lab: false,
+        equations: false,
+        applications: false,
+        quiz: false
+      }
+    };
+
+    /* ========================================================
+       2. MÀN HÌNH BẮT ĐẦU & AVATAR SELECTION
+       ======================================================== */
+    function selectAvatar(avatar, title, btn) {
+      gameState.playerAvatar = avatar;
+      gameState.playerTitle = title;
+      document.querySelectorAll('#avatar-selector button').forEach(b => {
+        b.className = 'avatar-btn p-3 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 flex flex-col items-center justify-center transition active:scale-95 shadow-xs';
+      });
+      btn.className = 'avatar-btn p-3 rounded-2xl border-2 border-emerald-500 bg-emerald-50 flex flex-col items-center justify-center transition active:scale-95 shadow-sm';
+      playSound('correct');
+    }
+
+    function startGame() {
+      const nameInput = document.getElementById('start-student-name');
+      const name = nameInput.value.trim() || 'Học Sinh Xuất Sắc';
+      gameState.playerName = name;
+
+      // Update UI with player info
+      document.querySelectorAll('.player-name-text').forEach(el => el.textContent = name);
+      document.getElementById('header-student-name').textContent = name;
+      document.getElementById('header-avatar').textContent = gameState.playerAvatar;
+      document.getElementById('cert-student-name').textContent = name.toUpperCase();
+
+      // Hide start screen
+      const startScreen = document.getElementById('game-start-screen');
+      startScreen.style.opacity = '0';
+      startScreen.style.transition = 'opacity 0.4s ease-out';
+      setTimeout(() => startScreen.classList.add('hidden'), 400);
+
+      playSound('fanfare');
+      triggerConfetti(1500);
+      spawnFloatingScore('+0 XP Sẵn Sàng!');
+    }
+
+    /* ========================================================
+       3. HỆ THỐNG HUY HIỆU (BADGES SYSTEM)
+       ======================================================== */
+    function unlockBadge(badgeKey) {
+      const badge = gameState.badges[badgeKey];
+      if (!badge || badge.unlocked) return;
+
+      badge.unlocked = true;
+      addPoints(badge.reward, null, false);
+
+      // Highlight in header
+      const num = badgeKey.replace('b', '');
+      const iconEl = document.getElementById('badge-icon-' + num);
+      if (iconEl) {
+        iconEl.classList.remove('opacity-25', 'grayscale');
+        iconEl.classList.add('scale-125');
+        setTimeout(() => iconEl.classList.remove('scale-125'), 600);
+      }
+
+      // Show Popup Modal
+      document.getElementById('badge-modal-icon').textContent = badge.icon;
+      document.getElementById('badge-modal-title').textContent = badge.name;
+      document.getElementById('badge-modal-desc').textContent = badge.desc;
+      document.getElementById('badge-modal-reward').textContent = `+${badge.reward} XP Thưởng Thành Tích ⭐`;
+      
+      const modal = document.getElementById('badge-modal');
+      modal.classList.remove('hidden');
+
+      playSound('fanfare');
+      triggerConfetti(2500);
+      renderBadgeGrid();
+    }
+
+    function closeBadgeModal() {
+      document.getElementById('badge-modal').classList.add('hidden');
+    }
+
+    function renderBadgeGrid() {
+      const grid = document.getElementById('badge-collection-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      let count = 0;
+      Object.keys(gameState.badges).forEach(key => {
+        const b = gameState.badges[key];
+        if (b.unlocked) count++;
+
+        const card = document.createElement('div');
+        card.className = `p-3 rounded-2xl border-2 text-center transition ${
+          b.unlocked 
+            ? 'border-amber-400 bg-amber-50/80 shadow-sm' 
+            : 'border-slate-200 bg-slate-50 opacity-40 grayscale'
+        }`;
+        card.innerHTML = `
+          <div class="text-3xl mb-1">${b.icon}</div>
+          <div class="text-[11px] font-black text-slate-800 leading-tight">${b.name}</div>
+          <div class="text-[9px] text-slate-500 mt-0.5 leading-snug">${b.desc}</div>
+          <div class="mt-1 text-[9px] font-black ${b.unlocked ? 'text-amber-700' : 'text-slate-400'}">
+            ${b.unlocked ? '✓ ĐÃ ĐẠT' : 'CHƯA MỞ'}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      document.getElementById('badge-summary-counter').textContent = `${count}/5 Mở khóa`;
+    }
+
+    /* ========================================================
+       4. FLOATING SCORE EFFECT & AUDIO
+       ======================================================== */
+    function spawnFloatingScore(text, sourceElement = null) {
+      const container = document.getElementById('floating-score-container');
+      const floatEl = document.createElement('div');
+      floatEl.className = 'fixed font-black text-amber-500 text-lg drop-shadow-md float-score-anim z-50 bg-amber-50 border border-amber-300 px-3 py-1 rounded-full';
+      floatEl.textContent = text;
+
+      if (sourceElement) {
+        const rect = sourceElement.getBoundingClientRect();
+        floatEl.style.left = `${rect.left + rect.width / 2}px`;
+        floatEl.style.top = `${rect.top}px`;
+      } else {
+        floatEl.style.left = '50%';
+        floatEl.style.top = '30%';
+      }
+
+      container.appendChild(floatEl);
+      setTimeout(() => floatEl.remove(), 1300);
+    }
+
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('sound-icon').textContent = soundEnabled ? '🔊' : '🔇';
+      document.getElementById('sound-toggle-btn').classList.toggle('bg-red-50', !soundEnabled);
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+
+        if (type === 'correct') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.08);
+          osc.frequency.setValueAtTime(783.99, now + 0.16);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+          osc.start(now);
+          osc.stop(now + 0.4);
+        } else if (type === 'wrong') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(160, now);
+          osc.frequency.setValueAtTime(110, now + 0.15);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'fanfare') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+            gain.gain.setValueAtTime(0.16, now + idx * 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.35);
+            osc.start(now + idx * 0.1);
+            osc.stop(now + idx * 0.1 + 0.35);
+          });
+        }
+      } catch (e) {}
+    }
+
+    /* Confetti */
+    function triggerConfetti(duration = 2000) {
+      const canvas = document.getElementById('confetti-canvas');
+      canvas.style.display = 'block';
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#10b981', '#06b6d4', '#f59e0b', '#ec4899', '#8b5cf6', '#3b82f6'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height * 0.4,
+          r: Math.random() * 6 + 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          vx: (Math.random() - 0.5) * 5,
+          vy: Math.random() * 4 + 2,
+          rot: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 10
+        });
+      }
+
+      const startTime = performance.now();
+      function update(t) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const elapsed = t - startTime;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.vRot;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rot * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.r, -p.r, p.r * 1.8, p.r);
+          ctx.restore();
+        });
+        if (elapsed < duration) {
+          requestAnimationFrame(update);
+        } else {
+          canvas.style.display = 'none';
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      requestAnimationFrame(update);
+    }
+
+    /* ========================================================
+       5. QUẢN LÝ TIẾN ĐỘ & ĐIỂM SỐ & LEVEL
+       ======================================================== */
+    function addPoints(pts, sourceEl = null, triggerFloat = true) {
+      gameState.points += pts;
+      document.getElementById('user-points').textContent = gameState.points;
+      document.getElementById('cert-points').textContent = gameState.points + 'đ';
+
+      if (triggerFloat) {
+        spawnFloatingScore(`+${pts} XP ⭐`, sourceEl);
+      }
+
+      // Update Player Level
+      const lvlBadge = document.getElementById('header-level-badge');
+      if (gameState.points >= 150) {
+        lvlBadge.textContent = 'Lv.5 Đại Kiện Tướng';
+        lvlBadge.className = 'text-[10px] font-black uppercase tracking-wider text-purple-900 bg-purple-200 px-2 py-0.5 rounded-full';
+        document.getElementById('cert-rank').textContent = 'Xuất Sắc (Hạng S)';
+      } else if (gameState.points >= 100) {
+        lvlBadge.textContent = 'Lv.4 Chuyên gia';
+        lvlBadge.className = 'text-[10px] font-black uppercase tracking-wider text-amber-900 bg-amber-200 px-2 py-0.5 rounded-full';
+        document.getElementById('cert-rank').textContent = 'Giỏi (Hạng A)';
+      } else if (gameState.points >= 50) {
+        lvlBadge.textContent = 'Lv.3 Thợ săn';
+        lvlBadge.className = 'text-[10px] font-black uppercase tracking-wider text-teal-900 bg-teal-200 px-2 py-0.5 rounded-full';
+        document.getElementById('cert-rank').textContent = 'Khá (Hạng B)';
+      } else {
+        lvlBadge.textContent = 'Lv.2 Tập sự';
+        lvlBadge.className = 'text-[10px] font-black uppercase tracking-wider text-emerald-900 bg-emerald-200 px-2 py-0.5 rounded-full';
+      }
+
+      updateGlobalProgress();
+    }
+
+    function updateStreak(correct) {
+      const streakBadge = document.getElementById('header-streak-badge');
+      if (correct) {
+        gameState.streak++;
+        if (gameState.streak >= 2) {
+          streakBadge.textContent = `🔥 Chuỗi x${gameState.streak}`;
+          streakBadge.classList.remove('hidden');
+        }
+      } else {
+        gameState.streak = 0;
+        streakBadge.classList.add('hidden');
+      }
+    }
+
+    function updateGlobalProgress() {
+      const keys = Object.keys(gameState.completedTasks);
+      const doneCount = keys.filter(k => gameState.completedTasks[k]).length;
+      const pct = Math.round((doneCount / keys.length) * 100);
+
+      document.getElementById('global-progress-text').textContent = pct + '%';
+      document.getElementById('global-progress-bar').style.width = pct + '%';
+    }
+
+    /* ========================================================
+       6. ĐIỀU HƯỚNG TABS
+       ======================================================== */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      const target = document.getElementById(tabId);
+      if (target) {
+        target.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('tab-active');
+        btn.classList.add('bg-white/60');
+      });
+
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.add('tab-active');
+        activeBtn.classList.remove('bg-white/60');
+      }
+
+      if (tabId === 'tab-structure') {
+        gameState.completedTasks.structure = true;
+        updateGlobalProgress();
+      }
+      if (tabId === 'tab-summary') {
+        renderBadgeGrid();
+      }
+    }
+
+    /* ========================================================
+       7. NÚT CHƠI LẠI TOÀN BỘ GAME (RESTART GAME)
+       ======================================================== */
+    function confirmRestartGame() {
+      if (confirm('Em có chắc chắn muốn chơi lại từ đầu không? Điểm số và các thử thách sẽ được làm mới!')) {
+        restartEntireGame();
+      }
+    }
+
+    function restartEntireGame() {
+      // Reset State
+      gameState.points = 0;
+      gameState.streak = 0;
+      Object.keys(gameState.completedTasks).forEach(k => gameState.completedTasks[k] = false);
+      Object.keys(gameState.badges).forEach(k => gameState.badges[k].unlocked = false);
+
+      document.getElementById('user-points').textContent = '0';
+      document.getElementById('cert-points').textContent = '0đ';
+      document.getElementById('header-level-badge').textContent = 'Lv.1 Tập sự';
+      document.getElementById('header-streak-badge').classList.add('hidden');
+
+      // Reset Badge icons in header
+      for (let i = 1; i <= 5; i++) {
+        const el = document.getElementById('badge-icon-' + i);
+        if (el) el.classList.add('opacity-25', 'grayscale');
+      }
+
+      // Reset Warmup
+      document.querySelectorAll('.warmup-btn').forEach(btn => {
+        btn.disabled = false;
+        btn.className = 'warmup-btn text-left p-3.5 rounded-2xl border-2 border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition font-bold text-slate-800 text-sm flex items-center justify-between';
+      });
+      document.getElementById('warmup-feedback').classList.add('hidden');
+
+      // Reset Classifier & Matcher & Lab & Quiz
+      resetClassification();
+      initMatchingActivity();
+      resetLab();
+      restartQuiz();
+      initTFActivity();
+      updateGlobalProgress();
+      renderBadgeGrid();
+
+      // Show Start Screen again
+      const startScreen = document.getElementById('game-start-screen');
+      startScreen.classList.remove('hidden');
+      startScreen.style.opacity = '1';
+
+      switchTab('tab-intro');
+      playSound('fanfare');
+    }
+
+    /* ========================================================
+       8. PHẦN KHỞI ĐỘNG
+       ======================================================== */
+    function checkWarmupAnswer(choiceIdx, btnEl) {
+      const feedback = document.getElementById('warmup-feedback');
+      const buttons = document.querySelectorAll('#warmup-options button');
+
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === 1) {
+          btn.classList.add('border-emerald-500', 'bg-emerald-50', 'glow-correct');
+        } else if (idx === choiceIdx && choiceIdx !== 1) {
+          btn.classList.add('border-rose-500', 'bg-rose-50');
+        }
+      });
+
+      feedback.classList.remove('hidden');
+      if (choiceIdx === 1) {
+        // ĐÚNG
+        feedback.className = 'p-4 rounded-2xl mt-4 bg-emerald-100 border border-emerald-300 text-emerald-950 font-bold text-xs sm:text-sm';
+        feedback.innerHTML = `
+          🎉 <b>Chính xác tuyệt vời!</b><br>
+          Khí mỏ dầu hoá lỏng (bếp gas, bật lửa) hay xăng dầu xe cộ đều có thành phần chính là các <b>Alkane</b>.
+          Khi cháy, chúng toả ra nguồn năng lượng nhiệt rất lớn nuôi sống các động cơ và ngọn lửa!
+        `;
+        playSound('correct');
+        triggerConfetti(1500);
+        updateStreak(true);
+
+        if (!gameState.completedTasks.warmup) {
+          gameState.completedTasks.warmup = true;
+          addPoints(15, btnEl);
+          unlockBadge('b1'); // Huy hiệu 1
+        }
+      } else {
+        // SAI
+        feedback.className = 'p-4 rounded-2xl mt-4 bg-amber-100 border border-amber-300 text-amber-950 font-bold text-xs sm:text-sm';
+        feedback.innerHTML = `
+          💡 <b>Gợi ý cho em:</b> Muối ăn, tinh bột hay kim loại không dùng làm nhiên liệu đốt cho xe máy hay bếp gas.<br>
+          Đáp án chính xác là <b>B. Các Alkane</b>! Hãy tiếp tục khám phá nhé!
+        `;
+        playSound('wrong');
+        updateStreak(false);
+        btnEl.classList.add('shake');
+        setTimeout(() => btnEl.classList.remove('shake'), 500);
+      }
+    }
+
+    /* ========================================================
+       9. HOẠT ĐỘNG 1: THỢ SĂN HYDROCARBON & ALKANE
+       ======================================================== */
+    const compoundsList = [
+      { id: 'c1', code: '(A) CH₃—CH₃', category: 'alkane', name: 'Ethane' },
+      { id: 'c2', code: '(B) CH₂=CH—CH₃', category: 'other-hc', name: 'Propene' },
+      { id: 'c3', code: '(C) CH₂=C(CH₃)—CH₃', category: 'other-hc', name: 'Isobutene' },
+      { id: 'c4', code: '(D) CH₃—CH₂—OH', category: 'non-hc', name: 'Ethanol' },
+      { id: 'c5', code: '(E) CH₃—COOH', category: 'non-hc', name: 'Acetic acid' },
+      { id: 'c6', code: '(G) CH₃—CH(CH₃)—CH₃', category: 'alkane', name: 'Isobutane' },
+      { id: 'c7', code: '(H) CH₂=CH—CH=CH₂', category: 'other-hc', name: 'Butadiene' },
+      { id: 'c8', code: '(I) CH₄', category: 'alkane', name: 'Methane' }
+    ];
+
+    let selectedCompound = null;
+    const binContents = { 'alkane': [], 'other-hc': [], 'non-hc': [] };
+
+    function initClassifierActivity() {
+      const pool = document.getElementById('classifier-pool');
+      pool.innerHTML = '';
+      binContents['alkane'] = [];
+      binContents['other-hc'] = [];
+      binContents['non-hc'] = [];
+      updateBinUI();
+      document.getElementById('classifier-result').textContent = '';
+
+      compoundsList.forEach(item => {
+        const btn = document.createElement('button');
+        btn.id = 'comp-btn-' + item.id;
+        btn.className = 'px-3 py-1.5 rounded-xl border-2 border-slate-300 bg-white hover:border-emerald-500 font-mono font-bold text-xs text-slate-800 transition active:scale-95 shadow-xs';
+        btn.textContent = item.code;
+        btn.onclick = () => selectCompound(item);
+        pool.appendChild(btn);
+      });
+    }
+
+    function selectCompound(item) {
+      selectedCompound = item;
+      document.querySelectorAll('#classifier-pool button').forEach(b => {
+        b.classList.remove('ring-4', 'ring-emerald-400', 'bg-emerald-50');
+      });
+      const active = document.getElementById('comp-btn-' + item.id);
+      if (active) {
+        active.classList.add('ring-4', 'ring-emerald-400', 'bg-emerald-50');
+      }
+    }
+
+    function putSelectedInBin(binType) {
+      if (!selectedCompound) {
+        alert('Em hãy bấm chọn một chất trong danh sách ở trên trước nhé!');
+        return;
+      }
+      for (const b in binContents) {
+        binContents[b] = binContents[b].filter(x => x.id !== selectedCompound.id);
+      }
+      binContents[binType].push(selectedCompound);
+
+      const compBtn = document.getElementById('comp-btn-' + selectedCompound.id);
+      if (compBtn) compBtn.classList.add('opacity-30', 'pointer-events-none');
+
+      selectedCompound = null;
+      updateBinUI();
+      playSound('correct');
+    }
+
+    function updateBinUI() {
+      ['alkane', 'other-hc', 'non-hc'].forEach(bin => {
+        const container = document.getElementById('bin-items-' + bin);
+        const count = document.getElementById('bin-count-' + bin);
+        container.innerHTML = '';
+        binContents[bin].forEach(item => {
+          const chip = document.createElement('span');
+          chip.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-slate-300 text-[11px] font-mono font-bold text-slate-800 shadow-xs';
+          chip.textContent = item.code;
+          container.appendChild(chip);
+        });
+        count.textContent = binContents[bin].length + (bin === 'alkane' ? '/3' : (bin === 'other-hc' ? '/3' : '/2'));
+      });
+    }
+
+    function checkClassification(btnEl) {
+      const totalPlaced = binContents['alkane'].length + binContents['other-hc'].length + binContents['non-hc'].length;
+      if (totalPlaced < 8) {
+        document.getElementById('classifier-result').innerHTML = `<span class="text-amber-700">⚠️ Em hãy xếp đủ cả 8 chất vào 3 giỏ trước nhé!</span>`;
+        return;
+      }
+
+      let isCorrect = true;
+      let wrongMsg = '';
+
+      binContents['alkane'].forEach(c => {
+        if (c.category !== 'alkane') { isCorrect = false; wrongMsg = `${c.code} không phải Alkane vì không chỉ gồm liên kết đơn mạch hở!`; }
+      });
+      binContents['other-hc'].forEach(c => {
+        if (c.category !== 'other-hc') { isCorrect = false; wrongMsg = `${c.code} bị xếp nhầm nhóm!`; }
+      });
+      binContents['non-hc'].forEach(c => {
+        if (c.category !== 'non-hc') { isCorrect = false; wrongMsg = `${c.code} là hydrocarbon, không phải nhóm chứa oxi!`; }
+      });
+
+      const resBox = document.getElementById('classifier-result');
+      if (isCorrect) {
+        resBox.innerHTML = `
+          <span class="text-emerald-800 bg-emerald-100 px-3 py-1.5 rounded-xl inline-block font-black">
+            🎉 Chính xác tuyệt đối! Em phân biệt siêu đẳng Alkane (A, G, I), HC khác (B, C, H) và Dẫn xuất (D, E)!
+          </span>
+        `;
+        playSound('correct');
+        triggerConfetti(1500);
+        updateStreak(true);
+
+        if (!gameState.completedTasks.classify) {
+          gameState.completedTasks.classify = true;
+          addPoints(20, btnEl);
+          unlockBadge('b2'); // Huy hiệu 2
+        }
+      } else {
+        resBox.innerHTML = `<span class="text-rose-700 bg-rose-100 px-3 py-1.5 rounded-xl inline-block font-bold">❌ Chưa chính xác. Gợi ý: ${wrongMsg} Hãy bấm "Xếp lại" nhé!</span>`;
+        playSound('wrong');
+        updateStreak(false);
+      }
+    }
+
+    function resetClassification() {
+      initClassifierActivity();
+    }
+
+    /* ========================================================
+       10. CẤU TẠO PHÂN TỬ (Full / Condensed)
+       ======================================================== */
+    function setStructureView(mode) {
+      const full = document.querySelectorAll('.structure-full');
+      const cond = document.querySelectorAll('.structure-condensed');
+      const btnF = document.getElementById('view-mode-full');
+      const btnC = document.getElementById('view-mode-condensed');
+
+      if (mode === 'full') {
+        full.forEach(el => el.classList.remove('hidden'));
+        cond.forEach(el => el.classList.add('hidden'));
+        btnF.className = 'px-3 py-1 rounded-lg bg-white text-emerald-700 shadow-xs transition font-black';
+        btnC.className = 'px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition font-bold';
+      } else {
+        full.forEach(el => el.classList.add('hidden'));
+        cond.forEach(el => el.classList.remove('hidden'));
+        btnC.className = 'px-3 py-1 rounded-lg bg-white text-emerald-700 shadow-xs transition font-black';
+        btnF.className = 'px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition font-bold';
+      }
+    }
+
+    function selectAlkane(carbonNum) {
+      document.querySelectorAll('.alkane-card').forEach(c => {
+        c.classList.remove('border-emerald-500', 'bg-emerald-50/60');
+        c.classList.add('border-slate-200', 'bg-white');
+      });
+      const target = document.getElementById('card-c' + carbonNum);
+      if (target) {
+        target.classList.add('border-emerald-500', 'bg-emerald-50/60');
+        target.classList.remove('border-slate-200', 'bg-white');
+        playSound('correct');
+      }
+    }
+
+    /* ========================================================
+       11. HOẠT ĐỘNG 2: MATCHING GAME
+       ======================================================== */
+    const matchPairs = [
+      { id: 1, name: 'Methane (1C)', formula: 'CH₄' },
+      { id: 2, name: 'Ethane (2C)', formula: 'CH₃—CH₃' },
+      { id: 3, name: 'Propane (3C)', formula: 'CH₃—CH₂—CH₃' },
+      { id: 4, name: 'Butane (4C)', formula: 'CH₃—CH₂—CH₂—CH₃' }
+    ];
+
+    let matchSelectedName = null;
+    let matchSelectedFormula = null;
+    let matchedCount = 0;
+
+    function initMatchingActivity() {
+      matchedCount = 0;
+      matchSelectedName = null;
+      matchSelectedFormula = null;
+      document.getElementById('matching-feedback').textContent = '';
+
+      const colNames = document.getElementById('match-col-names');
+      const colFormulas = document.getElementById('match-col-formulas');
+      colNames.innerHTML = '';
+      colFormulas.innerHTML = '';
+
+      const shuffledNames = [...matchPairs].sort(() => Math.random() - 0.5);
+      const shuffledFormulas = [...matchPairs].sort(() => Math.random() - 0.5);
+
+      shuffledNames.forEach(item => {
+        const btn = document.createElement('button');
+        btn.id = 'match-name-' + item.id;
+        btn.className = 'match-card w-full p-3 rounded-2xl border-2 border-slate-200 bg-white hover:border-emerald-400 font-black text-slate-800 text-xs sm:text-sm transition text-left flex items-center justify-between shadow-xs';
+        btn.innerHTML = `<span>🏷️ ${item.name}</span><span class="text-[11px] text-slate-400">Chọn</span>`;
+        btn.onclick = () => selectMatchName(item);
+        colNames.appendChild(btn);
+      });
+
+      shuffledFormulas.forEach(item => {
+        const btn = document.createElement('button');
+        btn.id = 'match-formula-' + item.id;
+        btn.className = 'match-card w-full p-3 rounded-2xl border-2 border-slate-200 bg-white hover:border-teal-400 font-mono font-black text-slate-800 text-xs sm:text-sm transition text-left flex items-center justify-between shadow-xs';
+        btn.innerHTML = `<span>⚗️ ${item.formula}</span><span class="text-[11px] text-slate-400">Chọn</span>`;
+        btn.onclick = () => selectMatchFormula(item);
+        colFormulas.appendChild(btn);
+      });
+    }
+
+    function selectMatchName(item) {
+      matchSelectedName = item;
+      document.querySelectorAll('#match-col-names button').forEach(b => b.classList.remove('border-emerald-600', 'bg-emerald-50'));
+      document.getElementById('match-name-' + item.id).classList.add('border-emerald-600', 'bg-emerald-50');
+      checkMatchPair();
+    }
+
+    function selectMatchFormula(item) {
+      matchSelectedFormula = item;
+      document.querySelectorAll('#match-col-formulas button').forEach(b => b.classList.remove('border-teal-600', 'bg-teal-50'));
+      document.getElementById('match-formula-' + item.id).classList.add('border-teal-600', 'bg-teal-50');
+      checkMatchPair();
+    }
+
+    function checkMatchPair() {
+      if (!matchSelectedName || !matchSelectedFormula) return;
+      const feedback = document.getElementById('matching-feedback');
+
+      if (matchSelectedName.id === matchSelectedFormula.id) {
+        playSound('correct');
+        const nameBtn = document.getElementById('match-name-' + matchSelectedName.id);
+        const formulaBtn = document.getElementById('match-formula-' + matchSelectedFormula.id);
+
+        nameBtn.className = 'w-full p-3 rounded-2xl border-2 border-emerald-500 bg-emerald-100 text-emerald-950 font-black text-xs sm:text-sm pointer-events-none flex items-center justify-between';
+        nameBtn.innerHTML = `<span>✓ ${matchSelectedName.name}</span><span>🎉</span>`;
+
+        formulaBtn.className = 'w-full p-3 rounded-2xl border-2 border-emerald-500 bg-emerald-100 text-emerald-950 font-mono font-black text-xs sm:text-sm pointer-events-none flex items-center justify-between';
+        formulaBtn.innerHTML = `<span>✓ ${matchSelectedFormula.formula}</span><span>🎉</span>`;
+
+        matchSelectedName = null;
+        matchSelectedFormula = null;
+        matchedCount++;
+        updateStreak(true);
+
+        if (matchedCount === 4) {
+          feedback.innerHTML = '<span class="text-emerald-800 bg-emerald-100 px-3 py-1.5 rounded-xl inline-block font-black">🎉 Xuất sắc! Ghép đúng toàn bộ 4 Alkane!</span>';
+          triggerConfetti(1500);
+
+          if (!gameState.completedTasks.structure) {
+            gameState.completedTasks.structure = true;
+            addPoints(20, feedback);
+            unlockBadge('b3'); // Huy hiệu 3
+          }
+        } else {
+          feedback.innerHTML = '<span class="text-emerald-700">Đúng rồi! Tiếp tục cặp tiếp theo nào!</span>';
+        }
+      } else {
+        playSound('wrong');
+        updateStreak(false);
+        feedback.innerHTML = '<span class="text-rose-600">Chưa đúng! Hãy đối chiếu lại số nguyên tử Carbon nhé!</span>';
+        const nameBtn = document.getElementById('match-name-' + matchSelectedName.id);
+        const formulaBtn = document.getElementById('match-formula-' + matchSelectedFormula.id);
+
+        nameBtn.classList.add('shake');
+        formulaBtn.classList.add('shake');
+        setTimeout(() => {
+          nameBtn.classList.remove('shake', 'border-emerald-600', 'bg-emerald-50');
+          formulaBtn.classList.remove('shake', 'border-teal-600', 'bg-teal-50');
+          matchSelectedName = null;
+          matchSelectedFormula = null;
+        }, 500);
+      }
+    }
+
+    /* ========================================================
+       12. THÍ NGHIỆM ẢO: BUTANE (Hình 23.2)
+       ======================================================== */
+    function runLabStep(step, btnEl) {
+      const flame = document.getElementById('flame-element');
+      const steam = document.getElementById('flask-steam');
+      const liquid = document.getElementById('flask-liquid');
+      const liquidColor = document.getElementById('liquid-color');
+      const liquidLabel = document.getElementById('liquid-label');
+      const obsBox = document.getElementById('lab-observation-box');
+      const stepIndicator = document.getElementById('lab-step-indicator');
+      const btnStep2 = document.getElementById('lab-btn-step2');
+      const quizArea = document.getElementById('lab-quiz-area');
+
+      if (step === 1) {
+        flame.classList.remove('opacity-0');
+        steam.classList.remove('opacity-0');
+        stepIndicator.textContent = 'Bước 1: Ngọn lửa Butane & Hơi nước đọng';
+        obsBox.innerHTML = '🔥 <b class="text-amber-400">Hiện tượng:</b> Sau vài giây, <b>thành trong bình mờ đi</b> do hơi nước (H₂O) ngưng tụ!';
+        playSound('correct');
+
+        btnStep2.disabled = false;
+        btnStep2.classList.remove('opacity-60', 'cursor-not-allowed', 'border-slate-200', 'bg-slate-50');
+        btnStep2.classList.add('border-teal-300', 'bg-teal-50', 'hover:bg-teal-100');
+        btnStep2.querySelector('span').classList.remove('bg-slate-400');
+        btnStep2.querySelector('span').classList.add('bg-teal-600');
+
+        quizArea.classList.remove('hidden');
+        renderLabQuiz(1);
+      } else if (step === 2) {
+        flame.classList.add('opacity-0');
+        liquid.classList.remove('opacity-0');
+        liquidColor.setAttribute('fill', 'rgba(255, 255, 255, 0.85)');
+        liquidLabel.textContent = 'CaCO₃ (Đục trắng)';
+        liquidLabel.setAttribute('fill', '#0f172a');
+        stepIndicator.textContent = 'Bước 2: Nước vôi trong bị vẩn đục';
+        obsBox.innerHTML = '🥛 <b class="text-emerald-400">Hiện tượng:</b> Nước vôi trong <b>bị vẩn đục trắng</b>, chứng minh tạo ra khí <b>Carbon dioxide (CO₂)</b>!';
+        playSound('correct');
+        triggerConfetti(1200);
+
+        renderLabQuiz(2);
+      }
+    }
+
+    function renderLabQuiz(step) {
+      const qText = document.getElementById('lab-question-text');
+      const qOpts = document.getElementById('lab-quiz-options');
+      const qFeed = document.getElementById('lab-quiz-feedback');
+      qFeed.classList.add('hidden');
+      qOpts.innerHTML = '';
+
+      if (step === 1) {
+        qText.textContent = 'Hiện tượng thành bình bị mờ đi khi đốt butane chứng minh sinh ra chất nào?';
+        const opts = ['Khí Oxygen (O₂)', 'Hơi nước (H₂O)', 'Khí Hydrogen (H₂)', 'Dầu bám'];
+        opts.forEach((opt, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'w-full text-left p-2 rounded-xl border border-amber-300 bg-white hover:bg-amber-100 font-bold text-xs text-slate-800 transition';
+          btn.textContent = opt;
+          btn.onclick = () => {
+            qFeed.classList.remove('hidden');
+            if (idx === 1) {
+              qFeed.className = 'text-xs font-bold p-2 rounded-xl bg-emerald-100 text-emerald-950';
+              qFeed.innerHTML = '🎉 Đúng rồi! Hơi nước ngưng tụ làm mờ thành bình!';
+              playSound('correct');
+              updateStreak(true);
+            } else {
+              qFeed.className = 'text-xs font-bold p-2 rounded-xl bg-rose-100 text-rose-950';
+              qFeed.innerHTML = '💡 Thử lại: Nước gặp thành bình mát ngưng tụ thành hạt sương!';
+              playSound('wrong');
+              updateStreak(false);
+            }
+          };
+          qOpts.appendChild(btn);
+        });
+      } else {
+        qText.textContent = 'Hiện tượng nước vôi trong Ca(OH)₂ vẩn đục chứng minh tạo ra khí nào?';
+        const opts = ['Khí Carbon dioxide (CO₂)', 'Khí Methane (CH₄)', 'Kim loại Canxi (Ca)', 'Khí CO độc'];
+        opts.forEach((opt, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'w-full text-left p-2 rounded-xl border border-teal-300 bg-white hover:bg-teal-100 font-bold text-xs text-slate-800 transition';
+          btn.textContent = opt;
+          btn.onclick = () => {
+            qFeed.classList.remove('hidden');
+            if (idx === 0) {
+              qFeed.className = 'text-xs font-bold p-2 rounded-xl bg-emerald-100 text-emerald-950';
+              qFeed.innerHTML = '🎉 Chính xác! CO₂ tạo kết tủa trắng CaCO₃!';
+              playSound('correct');
+              updateStreak(true);
+              if (!gameState.completedTasks.lab) {
+                gameState.completedTasks.lab = true;
+                addPoints(15, btn);
+              }
+            } else {
+              qFeed.className = 'text-xs font-bold p-2 rounded-xl bg-rose-100 text-rose-950';
+              qFeed.innerHTML = '💡 Nước vôi trong là thuốc thử nhận biết khí CO₂!';
+              playSound('wrong');
+              updateStreak(false);
+            }
+          };
+          qOpts.appendChild(btn);
+        });
+      }
+    }
+
+    function resetLab() {
+      document.getElementById('flame-element').classList.add('opacity-0');
+      document.getElementById('flask-steam').classList.add('opacity-0');
+      document.getElementById('flask-liquid').classList.add('opacity-0');
+      document.getElementById('lab-step-indicator').textContent = 'Bước 1: Chuẩn bị';
+      document.getElementById('lab-observation-box').textContent = 'Nhấn nút Thao tác 1 để đánh lửa butane và quan sát thành bình!';
+      const btn2 = document.getElementById('lab-btn-step2');
+      btn2.disabled = true;
+      btn2.className = 'w-full p-3 rounded-2xl border-2 border-slate-200 bg-slate-50 opacity-60 font-bold text-left text-slate-800 transition flex items-center gap-3 cursor-not-allowed';
+      btn2.querySelector('span').className = 'w-7 h-7 rounded-full bg-slate-400 text-white flex items-center justify-center text-xs font-black flex-shrink-0';
+      document.getElementById('lab-quiz-area').classList.add('hidden');
+    }
+
+    /* ========================================================
+       13. CÂN BẰNG PHƯƠNG TRÌNH PHẢN ỨNG
+       ======================================================== */
+    const eqCoeffs = { 'eq1-o2': 1, 'eq1-co2': 1, 'eq1-h2o': 1, 'eq2-o2': 1, 'eq2-co2': 1, 'eq2-h2o': 1 };
+
+    function adjustCoeff(id, delta) {
+      eqCoeffs[id] = Math.max(1, Math.min(20, eqCoeffs[id] + delta));
+      document.getElementById(id).textContent = eqCoeffs[id];
+    }
+
+    function checkEquation1(btnEl) {
+      const o2 = eqCoeffs['eq1-o2'];
+      const co2 = eqCoeffs['eq1-co2'];
+      const h2o = eqCoeffs['eq1-h2o'];
+      const fb = document.getElementById('eq1-feedback');
+
+      if (o2 === 2 && co2 === 1 && h2o === 2) {
+        fb.innerHTML = '<span class="text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-lg">🎉 Chính xác! CH₄ + 2O₂ ⟶ CO₂ + 2H₂O</span>';
+        playSound('correct');
+        updateStreak(true);
+        addPoints(15, btnEl);
+      } else {
+        fb.innerHTML = `<span class="text-rose-600">Chưa đúng! Gợi ý: 4H ➔ 2H₂O; vế phải có (2+2) = 4O ➔ cần 2O₂!</span>`;
+        playSound('wrong');
+        updateStreak(false);
+      }
+    }
+
+    function checkEquation2(btnEl) {
+      const o2 = eqCoeffs['eq2-o2'];
+      const co2 = eqCoeffs['eq2-co2'];
+      const h2o = eqCoeffs['eq2-h2o'];
+      const fb = document.getElementById('eq2-feedback');
+
+      if (o2 === 5 && co2 === 3 && h2o === 4) {
+        fb.innerHTML = '<span class="text-teal-800 bg-teal-100 px-2.5 py-1 rounded-lg">🎉 Quá đỉnh! C₃H₈ + 5O₂ ⟶ 3CO₂ + 4H₂O</span>';
+        playSound('correct');
+        triggerConfetti(1200);
+        updateStreak(true);
+
+        if (!gameState.completedTasks.equations) {
+          gameState.completedTasks.equations = true;
+          addPoints(15, btnEl);
+          unlockBadge('b4'); // Huy hiệu 4
+        }
+      } else {
+        fb.innerHTML = `<span class="text-rose-600">Chưa đúng! Gợi ý: 3C ➔ 3CO₂; 8H ➔ 4H₂O; tổng O vế phải = 10 ➔ cần 5O₂!</span>`;
+        playSound('wrong');
+        updateStreak(false);
+      }
+    }
+
+    /* ========================================================
+       14. HOẠT ĐỘNG 4: ĐÚNG / SAI ỨNG DỤNG
+       ======================================================== */
+    const tfQuestions = [
+      { q: '1. Khí propane và butane dễ hoá lỏng nên được đóng bình làm gas gia đình và bật lửa.', answer: true, explain: 'Đúng! Khí hoá lỏng (LPG) gồm propane và butane.' },
+      { q: '2. Các alkane ở trạng thái lỏng (xăng, dầu hoả, diesel) được dùng làm nhiên liệu cho xe máy và ô tô.', answer: true, explain: 'Đúng! Xăng dầu có thành phần chính là các alkane lỏng.' },
+      { q: '3. Khi đốt cháy 1 gam butane sẽ toả ra nhiều nhiệt lượng hơn so với 1 gam methane.', answer: false, explain: 'Sai! SGK chứng minh 1g Methane toả ~55.69 kJ/g, cao nhất trong các alkane.' },
+      { q: '4. Khi đốt gas trong phòng kín thiếu oxy sẽ không gây nguy hiểm gì.', answer: false, explain: 'Sai rất nguy hiểm! Thiếu oxy sinh ra khí cực độc CO gây ngạt thở tử vong!' }
+    ];
+
+    function initTFActivity() {
+      const container = document.getElementById('tf-activity-container');
+      container.innerHTML = '';
+      tfQuestions.forEach((item, idx) => {
+        const row = document.createElement('div');
+        row.className = 'p-3.5 rounded-2xl border border-slate-200 bg-slate-50/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3';
+        row.innerHTML = `
+          <div class="text-xs sm:text-sm font-bold text-slate-800 flex-1">
+            ${item.q}
+            <div id="tf-feedback-${idx}" class="hidden mt-1 text-xs font-semibold"></div>
+          </div>
+          <div class="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+            <button onclick="answerTF(${idx}, true, this)" class="px-3 py-1 rounded-xl border border-emerald-400 bg-white hover:bg-emerald-50 text-emerald-800 font-black text-xs transition">
+              ĐÚNG
+            </button>
+            <button onclick="answerTF(${idx}, false, this)" class="px-3 py-1 rounded-xl border border-rose-400 bg-white hover:bg-rose-50 text-rose-800 font-black text-xs transition">
+              SAI
+            </button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function answerTF(idx, userChoice, btnEl) {
+      const item = tfQuestions[idx];
+      const fb = document.getElementById('tf-feedback-' + idx);
+      fb.classList.remove('hidden');
+
+      if (userChoice === item.answer) {
+        fb.className = 'mt-1 text-xs font-bold text-emerald-800 bg-emerald-100 p-2 rounded-lg';
+        fb.innerHTML = `✓ Chính xác! ${item.explain}`;
+        playSound('correct');
+        updateStreak(true);
+
+        if (!gameState.completedTasks.applications) {
+          gameState.completedTasks.applications = true;
+          addPoints(20, btnEl);
+        }
+      } else {
+        fb.className = 'mt-1 text-xs font-bold text-rose-800 bg-rose-100 p-2 rounded-lg';
+        fb.innerHTML = `✕ Chưa đúng! ${item.explain}`;
+        playSound('wrong');
+        updateStreak(false);
+      }
+    }
+
+    /* ========================================================
+       15. ĐẤU TRƯỜNG QUIZ (GAME CHALLENGE)
+       ======================================================== */
+    const quizQuestions = [
+      {
+        title: 'Khái niệm nào sau đây đúng về Hydrocarbon?',
+        options: [
+          'Hợp chất chứa Carbon, Hydrogen và Oxygen',
+          'Hợp chất hữu cơ mà phân tử chỉ chứa nguyên tố Carbon và Hydrogen',
+          'Tất cả các chất vô cơ có chứa nguyên tố Carbon',
+          'Hợp chất chứa liên kết kim loại'
+        ],
+        answer: 1,
+        explain: 'Hydrocarbon là hợp chất hữu cơ mà phân tử CHỈ CHỨA 2 nguyên tố carbon (C) và hydrogen (H).'
+      },
+      {
+        title: 'Đặc điểm cấu tạo quan trọng nhất của phân tử Alkane là gì?',
+        options: [
+          'Có mạch vòng kín và có liên kết ba',
+          'Mạch hở, phân tử chỉ chứa các liên kết đơn',
+          'Bắt buộc phải có chứa ít nhất một liên kết đôi C=C',
+          'Chứa nhóm chức -OH'
+        ],
+        answer: 1,
+        explain: 'Alkane là những hydrocarbon mạch hở, trong phân tử chỉ chứa các LIÊN KẾT ĐƠN.'
+      },
+      {
+        title: 'Công thức phân tử chung của dãy đồng đẳng Alkane là gì?',
+        options: [
+          'CnH2n (n ≥ 2)',
+          'CnH2n-2 (n ≥ 2)',
+          'CnH2n+2 (n ≥ 1, n nguyên dương)',
+          'CnH2n+1OH (n ≥ 1)'
+        ],
+        answer: 2,
+        explain: 'Alkane có công thức phân tử chung là CnH2n+2 (n ≥ 1, n là số nguyên dương).'
+      },
+      {
+        title: 'Alkane có công thức phân tử C₃H₈ có tên gọi quốc tế là gì?',
+        options: [
+          'Methane',
+          'Ethane',
+          'Propane',
+          'Butane'
+        ],
+        answer: 2,
+        explain: '3 Carbon tương ứng tiền tố Prop- + đuôi -ane ➔ Propane (C₃H₈).'
+      },
+      {
+        title: 'Chất nào sau đây KHÔNG thuộc loại alkane?',
+        options: [
+          'CH₄ (Methane)',
+          'CH₃—CH₃ (Ethane)',
+          'CH₂=CH—CH₃ (Propene)',
+          'CH₃—CH₂—CH₃ (Propane)'
+        ],
+        answer: 2,
+        explain: 'CH₂=CH—CH₃ có chứa liên kết đôi C=C nên là alkene, không phải alkane.'
+      },
+      {
+        title: 'Trong thí nghiệm đốt cháy Butane, dẫn sản phẩm qua nước vôi trong Ca(OH)₂ thấy bị vẩn đục là do:',
+        options: [
+          'Tạo thành khí Oxygen (O₂)',
+          'Khí Carbon dioxide (CO₂) phản ứng tạo kết tủa trắng CaCO₃',
+          'Hơi nước ngưng tụ làm đục nước vôi',
+          'Khí butane không cháy bị hoà tan'
+        ],
+        answer: 1,
+        explain: 'CO₂ sinh ra tác dụng với Ca(OH)₂ tạo kết tủa trắng CaCO₃: CO₂ + Ca(OH)₂ ⟶ CaCO₃↓ + H₂O.'
+      },
+      {
+        title: 'Theo số liệu SGK, khi đốt cháy hoàn toàn 1 GAM chất nào sau đây toả ra NHIỀU NHIỆT LƯỢNG NHẤT?',
+        options: [
+          'Methane (CH₄)',
+          'Ethane (C₂H₆)',
+          'Propane (C₃H₈)',
+          'Butane (C₄H₁₀)'
+        ],
+        answer: 0,
+        explain: 'Đốt 1g Methane toả ra ~55.69 kJ/g, cao nhất so với Ethane (52.03), Propane (50.45) và Butane (49.62 kJ/g).'
+      },
+      {
+        title: 'Khí gas đun nấu trong bình gia đình (LPG) có thành phần chính là các alkane nào?',
+        options: [
+          'Chỉ có methane nguyên chất',
+          'Hỗn hợp Propane và Butane hoá lỏng',
+          'Xăng thơm và dầu diesel',
+          'Paraffin rắn đun chảy'
+        ],
+        answer: 1,
+        explain: 'Khí mỏ dầu hoá lỏng (LPG) dùng cho bật lửa gas và bếp gas gia đình có thành phần chính là propane và butane.'
+      }
+    ];
+
+    let currentQuizIndex = 0;
+    let quizScore = 0;
+    let quizAnswered = false;
+
+    function renderQuizQuestion() {
+      quizAnswered = false;
+      const q = quizQuestions[currentQuizIndex];
+      document.getElementById('quiz-badge').textContent = `Câu hỏi ${currentQuizIndex + 1} / ${quizQuestions.length}`;
+      document.getElementById('quiz-question-counter').textContent = `Câu ${currentQuizIndex + 1} trên ${quizQuestions.length}`;
+      document.getElementById('quiz-question-title').textContent = q.title;
+
+      const pct = ((currentQuizIndex + 1) / quizQuestions.length) * 100;
+      document.getElementById('quiz-progress-fill').style.width = pct + '%';
+
+      const fbBox = document.getElementById('quiz-feedback-box');
+      fbBox.classList.add('hidden');
+      const nextBtn = document.getElementById('quiz-next-btn');
+      nextBtn.disabled = true;
+
+      const container = document.getElementById('quiz-options-container');
+      container.innerHTML = '';
+
+      q.options.forEach((optText, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt-btn p-3.5 rounded-2xl border-2 border-slate-200 bg-slate-50 hover:border-indigo-400 hover:bg-indigo-50/50 font-bold text-slate-800 text-xs sm:text-sm text-left transition flex items-center gap-2.5 active:scale-98';
+        btn.innerHTML = `
+          <span class="w-6 h-6 rounded-full bg-white border border-slate-300 flex items-center justify-center text-xs font-black text-slate-600 flex-shrink-0">
+            ${String.fromCharCode(65 + optIdx)}
+          </span>
+          <span class="flex-1">${optText}</span>
+        `;
+        btn.onclick = () => selectQuizAnswer(optIdx, btn);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectQuizAnswer(chosenIdx, btnEl) {
+      if (quizAnswered) return;
+      quizAnswered = true;
+
+      const q = quizQuestions[currentQuizIndex];
+      const buttons = document.querySelectorAll('.quiz-opt-btn');
+      const fbBox = document.getElementById('quiz-feedback-box');
+      const nextBtn = document.getElementById('quiz-next-btn');
+
+      buttons.forEach((btn, idx) => {
+        btn.classList.add('pointer-events-none');
+        if (idx === q.answer) {
+          btn.classList.remove('border-slate-200', 'bg-slate-50');
+          btn.classList.add('border-emerald-500', 'bg-emerald-100', 'text-emerald-950', 'glow-correct');
+        } else if (idx === chosenIdx && chosenIdx !== q.answer) {
+          btn.classList.remove('border-slate-200', 'bg-slate-50');
+          btn.classList.add('border-rose-500', 'bg-rose-100', 'text-rose-950', 'shake');
+        }
+      });
+
+      fbBox.classList.remove('hidden');
+      if (chosenIdx === q.answer) {
+        quizScore += 10;
+        document.getElementById('quiz-score-display').textContent = `${quizScore} / 80`;
+        fbBox.className = 'p-3.5 rounded-2xl mb-4 text-xs sm:text-sm font-semibold bg-emerald-100 border border-emerald-300 text-emerald-950';
+        fbBox.innerHTML = `🎉 <b>Chính xác tuyệt vời!</b> ${q.explain}`;
+        playSound('correct');
+        updateStreak(true);
+        addPoints(10, btnEl);
+      } else {
+        fbBox.className = 'p-3.5 rounded-2xl mb-4 text-xs sm:text-sm font-semibold bg-rose-100 border border-rose-300 text-rose-950';
+        fbBox.innerHTML = `💡 <b>Chưa chính xác:</b> ${q.explain}`;
+        playSound('wrong');
+        updateStreak(false);
+      }
+
+      nextBtn.disabled = false;
+      if (currentQuizIndex === quizQuestions.length - 1) {
+        nextBtn.innerHTML = `<span>Xem Tổng Kết Điểm</span> <span>🏆</span>`;
+      }
+    }
+
+    function nextQuizQuestion() {
+      if (currentQuizIndex < quizQuestions.length - 1) {
+        currentQuizIndex++;
+        renderQuizQuestion();
+      } else {
+        document.getElementById('quiz-main-card').classList.add('hidden');
+        const resultsCard = document.getElementById('quiz-results-card');
+        resultsCard.classList.remove('hidden');
+        document.getElementById('quiz-final-score-text').textContent = `${quizScore} / 80`;
+        const evalBox = document.getElementById('quiz-final-evaluation');
+
+        if (quizScore >= 70) {
+          evalBox.textContent = 'Phong độ phi thường! Em chính là một Đại Kiện Tướng Alkane xuất sắc nhất!';
+          playSound('fanfare');
+          triggerConfetti(3000);
+          unlockBadge('b5'); // Huy hiệu 5
+        } else if (quizScore >= 50) {
+          evalBox.textContent = 'Kết quả rất tốt! Em đã nắm được hầu hết kiến thức cốt lõi về Alkane!';
+          playSound('correct');
+        } else {
+          evalBox.textContent = 'Em đã rất cố gắng! Hãy xem lại phần Thí nghiệm ảo và Cấu tạo rồi bấm "Chơi lại" nhé!';
+          playSound('wrong');
+        }
+
+        gameState.completedTasks.quiz = true;
+        updateGlobalProgress();
+      }
+    }
+
+    function restartQuiz() {
+      currentQuizIndex = 0;
+      quizScore = 0;
+      document.getElementById('quiz-score-display').textContent = '0 / 80';
+      document.getElementById('quiz-main-card').classList.remove('hidden');
+      document.getElementById('quiz-results-card').classList.add('hidden');
+      document.getElementById('quiz-next-btn').innerHTML = `<span>Câu tiếp theo</span> <span>➔</span>`;
+      renderQuizQuestion();
+    }
+
+    /* ========================================================
+       16. KHỞI TẠO BAN ĐẦU
+       ======================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      initClassifierActivity();
+      initMatchingActivity();
+      initTFActivity();
+      renderQuizQuestion();
+      renderBadgeGrid();
+      updateGlobalProgress();
+
+      const today = new Date();
+      const dateStr = today.getDate().toString().padStart(2, '0') + '/' + 
+                      (today.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+                      today.getFullYear();
+      document.getElementById('cert-date').textContent = dateStr;
+    });
+  </script>
+</body>
+</html>
