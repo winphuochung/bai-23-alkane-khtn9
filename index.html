@@ -18,10 +18,10 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
   <link rel="apple-touch-icon" href="logo.png">
 
-  <!-- Google Fonts: Nunito & Plus Jakarta Sans -->
+  <!-- Google Fonts: Outfit (Headings) & Plus Jakarta Sans (Body & UI) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -29,18 +29,35 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"Nunito"', 'system-ui', 'sans-serif'],
-            display: ['"Plus Jakarta Sans"', 'sans-serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            display: ['"Outfit"', 'sans-serif'],
+            heading: ['"Outfit"', 'sans-serif'],
           },
           colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+              950: '#022c22',
+            },
             game: {
               primary: '#059669',
               accent: '#f59e0b',
               flame: '#f97316',
               sky: '#0284c7',
-              purple: '#7c3aed',
               dark: '#0f172a'
             }
+          },
+          boxShadow: {
+            'clay': '0 4px 6px -1px rgba(0,0,0,0.04), 0 10px 15px -3px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)',
+            'clay-hover': '0 12px 25px -4px rgba(0,0,0,0.08), 0 6px 10px -4px rgba(0,0,0,0.03)',
+            'card': '0 2px 8px -1px rgba(15,23,42,0.06), 0 1px 4px -1px rgba(15,23,42,0.04)',
+            'glow-emerald': '0 0 25px rgba(16, 185, 129, 0.45)',
+            'glow-amber': '0 0 25px rgba(245, 158, 11, 0.45)',
           }
         }
       }
@@ -48,27 +65,83 @@
   </script>
   <style>
     body {
-      font-family: 'Nunito', system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #ecfdf5 0%, #e0f2fe 50%, #fef3c7 100%);
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: #f8fafc;
+      background-image: 
+        radial-gradient(circle at 12% 15%, rgba(16, 185, 129, 0.05) 0%, transparent 25%),
+        radial-gradient(circle at 88% 85%, rgba(6, 182, 212, 0.05) 0%, transparent 28%),
+        radial-gradient(#e2e8f0 1.2px, transparent 1.2px);
+      background-size: 100% 100%, 100% 100%, 28px 28px;
       min-height: 100vh;
-      color: #1e293b;
+      color: #0f172a;
       margin: 0;
       padding: 0;
       overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, h4, h5, .font-heading, .font-display {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      letter-spacing: -0.025em;
+      line-height: 1.25;
     }
 
     .tab-active {
       background: linear-gradient(135deg, #059669 0%, #0d9488 100%) !important;
       color: #ffffff !important;
-      box-shadow: 0 10px 15px -3px rgba(13, 148, 136, 0.35) !important;
+      box-shadow: 0 8px 18px -2px rgba(13, 148, 136, 0.4) !important;
+      border-color: transparent !important;
       transform: translateY(-2px);
     }
 
+    .tab-btn {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+    .tab-btn:hover:not(.tab-active) {
+      background: #ffffff !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
     .glass-card {
-      background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.7);
-      box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.03), 0 10px 20px -3px rgba(15, 23, 42, 0.04), 0 0 0 1px rgba(15, 23, 42, 0.02);
+      border-radius: 1.5rem;
+    }
+
+    .card-hover-lift {
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+    }
+    .card-hover-lift:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 30px -5px rgba(15, 23, 42, 0.08), 0 8px 12px -4px rgba(15, 23, 42, 0.03);
+    }
+
+    button {
+      cursor: pointer;
+      transition: all 0.15s ease-out;
+    }
+    button:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+
+    button:focus-visible, a:focus-visible, input:focus-visible {
+      outline: 2px solid #059669;
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
     }
 
     /* Floating Score Popup Animation */
@@ -134,52 +207,63 @@
   <!-- ======================================================== -->
   <!-- 0. MÀN HÌNH BẮT ĐẦU MINI GAME (START SCREEN OVERLAY)     -->
   <!-- ======================================================== -->
-  <div id="game-start-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-md overflow-y-auto">
-    <div class="relative w-full max-w-xl bg-white rounded-3xl p-6 sm:p-10 shadow-2xl border-4 border-emerald-400 text-center overflow-hidden my-auto">
+  <div id="game-start-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/85 backdrop-blur-md overflow-y-auto">
+    <div class="relative w-full max-w-xl bg-white rounded-3xl p-6 sm:p-9 shadow-2xl border-2 border-emerald-400/80 text-center overflow-hidden my-auto">
       
       <!-- Họa tiết nền trang trí -->
-      <div class="absolute -top-12 -right-12 w-48 h-48 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none"></div>
-      <div class="absolute -bottom-12 -left-12 w-48 h-48 bg-amber-400/20 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="absolute -top-16 -right-16 w-56 h-56 bg-emerald-400/15 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-16 -left-16 w-56 h-56 bg-amber-400/15 rounded-full blur-3xl pointer-events-none"></div>
 
-      <!-- Badge Tiêu đề -->
-      <div class="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 font-extrabold text-xs uppercase px-4 py-1.5 rounded-full mb-3 shadow-xs">
-        <span>🎮 MINI GAME HỌC TẬP</span> • <span>KHTN 9 (KẾT NỐI TRI THỨC)</span>
+      <!-- LOGO CÁ NHÂN TÁC GIẢ NỔI BẬT -->
+      <div class="relative inline-block mb-3 group">
+        <div class="absolute inset-0 bg-emerald-400 rounded-3xl blur-xl opacity-40 group-hover:opacity-60 transition duration-500 animate-pulse"></div>
+        <img src="logo.png" alt="Logo Cá Nhân Tác Giả" class="relative w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-3xl object-contain shadow-xl border-2 border-white/90 bg-white p-1.5 transition duration-300 hover:scale-105">
       </div>
 
-      <h1 class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+      <!-- Badge Tác Giả & Khóa học -->
+      <div class="flex items-center justify-center gap-2 flex-wrap mb-2">
+        <div class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 font-black text-xs uppercase px-3.5 py-1.5 rounded-full border border-emerald-200 shadow-xs">
+          <span>✨ HỆ THỐNG HỌC LIỆU SỐ</span> • <span>THẦY HÙNG</span>
+        </div>
+        <div class="inline-flex items-center gap-1.5 bg-sky-50 text-sky-800 font-extrabold text-xs uppercase px-3 py-1.5 rounded-full border border-sky-200 shadow-xs">
+          <span>🧪 KHTN 9</span> • <span>KẾT NỐI TRI THỨC</span>
+        </div>
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-snug">
         ĐẤU TRƯỜNG ALKANE: <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-600 to-amber-500">NHÀ HÓA HỌC TƯƠNG LAI</span>
       </h1>
-      <p class="text-slate-600 text-sm sm:text-base mt-2 max-w-md mx-auto">
-        Khám phá bí ẩn nhiên liệu, làm chủ cấu trúc phân tử và thí nghiệm đốt cháy Butane để trở thành <b>Đại Kiện Tướng Alkane</b>!
+      <p class="text-slate-600 text-xs sm:text-sm mt-2 max-w-md mx-auto font-medium">
+        Khám phá bí ẩn nhiên liệu, làm chủ cấu tạo phân tử, thực hành thí nghiệm ảo và chinh phục bảng điểm <b>Thang Điểm 10</b>!
       </p>
 
       <!-- Form Đăng ký người chơi -->
-      <div class="mt-6 p-5 bg-slate-50 rounded-2xl border border-slate-200 text-left space-y-4 shadow-inner">
+      <div class="mt-5 p-4 sm:p-5 bg-slate-50/90 rounded-2xl border border-slate-200/90 text-left space-y-3.5 shadow-inner">
         <div>
           <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1.5">
-            👤 Tên của em (hiển thị trên bảng điểm & giấy khen):
+            👤 Tên học sinh (hiển thị trên Giấy khen & Báo cáo Drive):
           </label>
-          <input type="text" id="start-student-name" placeholder="Ví dụ: Nguyễn Văn An" class="w-full px-4 py-3 rounded-xl border-2 border-slate-300 focus:border-emerald-500 focus:outline-none font-bold text-slate-900 text-base shadow-sm" value="Nguyễn Văn An">
+          <input type="text" id="start-student-name" placeholder="Ví dụ: Nguyễn Văn An" class="w-full px-4 py-3 rounded-xl border-2 border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none font-bold text-slate-900 text-base shadow-xs transition" value="Nguyễn Văn An">
         </div>
 
         <div>
           <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-2">
-            🎭 Chọn Nhân vật đại diện của em:
+            🎭 Chọn nhân vật đại diện:
           </label>
           <div class="grid grid-cols-4 gap-2" id="avatar-selector">
-            <button type="button" onclick="selectAvatar('🧑‍🔬', 'Thám tử Hóa học', this)" class="avatar-btn p-3 rounded-2xl border-2 border-emerald-500 bg-emerald-50 flex flex-col items-center justify-center transition active:scale-95 shadow-sm">
+            <button type="button" onclick="selectAvatar('🧑‍🔬', 'Thám tử Hóa học', this)" class="avatar-btn p-3 rounded-2xl border-2 border-emerald-500 bg-emerald-50/80 flex flex-col items-center justify-center transition active:scale-95 shadow-xs">
               <span class="text-3xl">🧑‍🔬</span>
               <span class="text-[10px] font-bold text-slate-700 mt-1">Thám tử</span>
             </button>
-            <button type="button" onclick="selectAvatar('🚀', 'Phi hành gia Năng lượng', this)" class="avatar-btn p-3 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 flex flex-col items-center justify-center transition active:scale-95 shadow-sm">
+            <button type="button" onclick="selectAvatar('🚀', 'Phi hành gia Năng lượng', this)" class="avatar-btn p-3 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 flex flex-col items-center justify-center transition active:scale-95 shadow-xs">
               <span class="text-3xl">🚀</span>
               <span class="text-[10px] font-bold text-slate-700 mt-1">Phi hành</span>
             </button>
-            <button type="button" onclick="selectAvatar('🧙‍♂️', 'Phù thủy Thí nghiệm', this)" class="avatar-btn p-3 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 flex flex-col items-center justify-center transition active:scale-95 shadow-sm">
+            <button type="button" onclick="selectAvatar('🧙‍♂️', 'Phù thủy Thí nghiệm', this)" class="avatar-btn p-3 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 flex flex-col items-center justify-center transition active:scale-95 shadow-xs">
               <span class="text-3xl">🧙‍♂️</span>
               <span class="text-[10px] font-bold text-slate-700 mt-1">Phù thủy</span>
             </button>
-            <button type="button" onclick="selectAvatar('👩‍🎓', 'Thủ khoa KHTN', this)" class="avatar-btn p-3 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 flex flex-col items-center justify-center transition active:scale-95 shadow-sm">
+            <button type="button" onclick="selectAvatar('👩‍🎓', 'Thủ khoa KHTN', this)" class="avatar-btn p-3 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 flex flex-col items-center justify-center transition active:scale-95 shadow-xs">
               <span class="text-3xl">👩‍🎓</span>
               <span class="text-[10px] font-bold text-slate-700 mt-1">Thủ khoa</span>
             </button>
@@ -187,24 +271,24 @@
         </div>
       </div>
 
-      <!-- Nhiệm vụ & Mục tiêu Game -->
+      <!-- Mục tiêu hoàn thành -->
       <div class="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
-        <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200">
+        <div class="p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/80 shadow-xs">
           <span class="text-base block mb-0.5">⭐</span>
-          <span class="font-bold text-amber-900">180+ Điểm XP</span>
+          <span class="font-extrabold text-amber-900">180+ Điểm XP</span>
         </div>
-        <div class="p-2.5 rounded-xl bg-purple-50 border border-purple-200">
+        <div class="p-2.5 rounded-xl bg-teal-50/80 border border-teal-200/80 shadow-xs">
           <span class="text-base block mb-0.5">🏆</span>
-          <span class="font-bold text-purple-900">5 Huy Hiệu</span>
+          <span class="font-extrabold text-teal-900">5 Huy Hiệu</span>
         </div>
-        <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
+        <div class="p-2.5 rounded-xl bg-emerald-50/80 border border-emerald-200/80 shadow-xs">
           <span class="text-base block mb-0.5">📜</span>
-          <span class="font-bold text-emerald-900">Bằng Khen Danh Dự</span>
+          <span class="font-extrabold text-emerald-900">Bằng Khen Danh Dự</span>
         </div>
       </div>
 
       <!-- Nút Bắt Đầu Lớn -->
-      <button onclick="startGame()" class="mt-6 w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-700 hover:to-teal-800 text-white font-black text-lg tracking-wide uppercase shadow-lg shadow-emerald-600/40 hover:shadow-xl transition transform active:scale-95 flex items-center justify-center gap-3">
+      <button onclick="startGame()" class="mt-5 w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-700 hover:to-teal-800 text-white font-black text-base sm:text-lg tracking-wide uppercase shadow-lg shadow-emerald-600/30 hover:shadow-xl transition transform active:scale-95 flex items-center justify-center gap-2">
         <span>🚀 BẮT ĐẦU CHINH PHỤC NGAY!</span>
       </button>
 
@@ -239,33 +323,40 @@
   <!-- ======================================================== -->
   <!-- TOP HEADER (GAME DASHBOARD)                              -->
   <!-- ======================================================== -->
-  <header class="sticky top-0 z-40 glass-card border-b border-emerald-100/80 transition-all duration-300">
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-xs transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5">
       <div class="flex items-center justify-between gap-3">
         
-        <!-- Player Info & Level -->
+        <!-- LOGO CÁ NHÂN & THÔNG TIN HỌC SINH -->
         <div class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-md text-2xl flex-shrink-0 border-2 border-white" id="header-avatar">
-            🧑‍🔬
+          <!-- Logo cá nhân giáo viên -->
+          <div class="relative group cursor-pointer" onclick="switchTab('tab-intro')" title="Hệ thống học liệu số KHTN 9 - Thầy Hùng">
+            <img src="logo.png" alt="Logo Cá Nhân" class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl object-cover shadow-sm border-2 border-emerald-500 bg-white p-0.5 hover:scale-105 transition duration-200">
+            <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[8px] text-white font-black" title="Tác giả">✓</span>
           </div>
+
           <div>
             <div class="flex items-center gap-2">
-              <span id="header-student-name" class="font-black text-slate-900 text-sm sm:text-base leading-tight">Nguyễn Văn An</span>
-              <span id="header-level-badge" class="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">Lv.1 Tập sự</span>
+              <span class="font-black text-slate-900 text-sm sm:text-base leading-tight tracking-tight">KHTN 9: BÀI 23 - ALKANE</span>
+              <span class="hidden sm:inline-block text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded-full border border-emerald-300">Biên soạn: Thầy Hùng</span>
             </div>
-            <div class="text-[11px] font-semibold text-slate-500 flex items-center gap-1.5">
-              <span>BÀI 23: ALKANE (KHTN 9)</span>
+            <div class="text-[11px] font-semibold text-slate-500 flex items-center gap-2 mt-0.5">
+              <span class="flex items-center gap-1 text-slate-800 font-bold">
+                <span id="header-avatar" class="text-xs">🧑‍🔬</span> 
+                <span id="header-student-name">Nguyễn Văn An</span>
+              </span>
               <span class="text-slate-300">•</span>
+              <span id="header-level-badge" class="text-teal-700 font-bold">Lv.1 Tập sự</span>
               <span id="header-streak-badge" class="text-orange-600 font-extrabold hidden">🔥 Chuỗi x1</span>
             </div>
           </div>
         </div>
 
         <!-- Điểm số, Huy hiệu & Nút Chơi lại -->
-        <div class="flex items-center gap-2 sm:gap-4">
+        <div class="flex items-center gap-2 sm:gap-3">
           
           <!-- Điểm số XP -->
-          <div class="flex items-center gap-1.5 bg-amber-50 border-2 border-amber-300 px-3 py-1 rounded-full shadow-sm">
+          <div class="flex items-center gap-1.5 bg-amber-50/90 border border-amber-300 px-3 py-1 rounded-full shadow-xs">
             <span class="text-base sm:text-lg">⭐</span>
             <div class="flex flex-col text-left">
               <span class="text-[9px] uppercase font-black text-amber-700 leading-none">Điểm XP</span>
@@ -274,7 +365,7 @@
           </div>
 
           <!-- Bộ sưu tập Huy hiệu Nhanh -->
-          <div class="hidden sm:flex items-center gap-1 bg-white border border-slate-200 px-2.5 py-1 rounded-full shadow-xs" title="Bộ sưu tập Huy hiệu">
+          <div class="hidden md:flex items-center gap-1 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full shadow-xs" title="Bộ sưu tập Huy hiệu">
             <span id="badge-icon-1" class="text-base opacity-25 grayscale transition-all" title="Huy hiệu 1: Khởi Động Nhanh">🥉</span>
             <span id="badge-icon-2" class="text-base opacity-25 grayscale transition-all" title="Huy hiệu 2: Thợ Săn Hydrocarbon">🥈</span>
             <span id="badge-icon-3" class="text-base opacity-25 grayscale transition-all" title="Huy hiệu 3: Bậc Thầy Phân Tử">🧬</span>
@@ -298,7 +389,7 @@
 
       <!-- Global Game Progress Bar -->
       <div class="w-full flex items-center gap-2 mt-2">
-        <div class="flex-1 h-2 bg-slate-200/80 rounded-full overflow-hidden">
+        <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200/60">
           <div id="global-progress-bar" class="h-full bg-gradient-to-r from-emerald-500 via-teal-500 to-amber-400 rounded-full transition-all duration-500 w-0"></div>
         </div>
         <span id="global-progress-text" class="text-[11px] font-black text-emerald-800 min-w-[32px] text-right">0%</span>
@@ -576,7 +667,7 @@
       <div class="glass-card rounded-3xl p-6 sm:p-8 bg-white border border-slate-200 shadow-md">
         <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
           <div class="flex items-center gap-2">
-            <span class="text-xs font-black bg-purple-100 text-purple-800 px-3 py-1 rounded-full uppercase">Hoạt động 1</span>
+            <span class="text-xs font-black bg-teal-100 text-teal-800 px-3 py-1 rounded-full uppercase">Hoạt động 1</span>
             <h3 class="text-lg sm:text-xl font-black text-slate-800">Thợ Săn Hydrocarbon & Alkane</h3>
           </div>
           <span class="text-xs text-amber-700 bg-amber-50 border border-amber-200 font-bold px-2.5 py-1 rounded-full">Phần thưởng: +20 XP ⭐</span>
@@ -1333,21 +1424,21 @@
     <section id="tab-challenge" class="tab-content hidden space-y-5">
       
       <!-- Banner Đấu Trường -->
-      <div class="glass-card rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-700 text-white relative overflow-hidden shadow-xl">
+      <div class="glass-card rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-slate-900 via-emerald-950 to-teal-900 border border-emerald-500/30 text-white relative overflow-hidden shadow-xl">
         <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-5">
           <div>
             <div class="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-xs font-black uppercase mb-2">
               🏆 ĐẤU TRƯỜNG QUIZ 20 CÂU • THANG ĐIỂM 10
             </div>
             <h2 class="text-2xl sm:text-3xl font-black">CHINH PHỤC ĐỈNH CAO ALKANE</h2>
-            <p class="text-purple-100 text-xs sm:text-sm mt-1 max-w-xl">
+            <p class="text-emerald-100 text-xs sm:text-sm mt-1 max-w-xl">
               20 câu hỏi sắp xếp từ <b>Dễ đến Khó</b> (Nhận biết ➔ Thông hiểu ➔ Vận dụng ➔ Vận dụng cao). Khi nộp bài sẽ tự động chấm điểm theo <b>Thang điểm 10</b>, hiển thị đáp án đúng kèm lời giải chi tiết và hỗ trợ <b>Lưu vào Google Drive</b>!
             </p>
           </div>
 
           <!-- Score & Progress Box -->
           <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-center min-w-[170px] shadow-inner">
-            <div class="text-[10px] font-black uppercase tracking-wider text-purple-200">Tiến độ làm bài</div>
+            <div class="text-[10px] font-black uppercase tracking-wider text-teal-200">Tiến độ làm bài</div>
             <div id="quiz-answered-count" class="text-2xl sm:text-3xl font-black text-amber-300 my-0.5">0 / 20 câu</div>
             <div class="text-xs font-bold text-white/90">Thang điểm 10.0</div>
           </div>
@@ -1537,7 +1628,7 @@
       
       <div class="flex items-center justify-between flex-wrap gap-2">
         <div>
-          <span class="text-xs font-black uppercase tracking-wider text-purple-700 bg-purple-100 px-3 py-1 rounded-full">Tổng Kết & Bằng Khen</span>
+          <span class="text-xs font-black uppercase tracking-wider text-teal-700 bg-teal-100 px-3 py-1 rounded-full">Tổng Kết & Bằng Khen</span>
           <h2 class="text-2xl font-black text-slate-900 mt-1">Sơ Đồ Tư Duy & Bảng Vinh Danh</h2>
         </div>
         <button onclick="confirmRestartGame()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black text-xs transition active:scale-95 shadow-xs flex items-center gap-1.5">
@@ -1546,7 +1637,7 @@
       </div>
 
       <!-- BẢNG BỘ SƯU TẬP 5 HUY HIỆU -->
-      <div class="glass-card rounded-3xl p-6 bg-gradient-to-r from-amber-50 via-white to-purple-50 border-2 border-amber-300 shadow-md">
+      <div class="glass-card rounded-3xl p-6 bg-gradient-to-r from-amber-50 via-white to-teal-50 border-2 border-amber-300 shadow-md">
         <div class="flex items-center justify-between flex-wrap gap-2 mb-4">
           <div class="flex items-center gap-2">
             <span class="text-xl">🏆</span>
@@ -1601,11 +1692,11 @@
           </div>
         </div>
 
-        <div class="mt-4 p-3 rounded-2xl bg-purple-50 border border-purple-200 flex items-start gap-2.5">
+        <div class="mt-4 p-3 rounded-2xl bg-teal-50 border border-teal-200 flex items-start gap-2.5">
           <span class="text-xl">🌱</span>
           <div>
-            <h5 class="font-black text-purple-900 text-xs sm:text-sm">Em có thể (Trang 105 SGK):</h5>
-            <p class="text-xs text-purple-800 mt-0.5 leading-relaxed font-medium">
+            <h5 class="font-black text-teal-900 text-xs sm:text-sm">Em có thể (Trang 105 SGK):</h5>
+            <p class="text-xs text-teal-800 mt-0.5 leading-relaxed font-medium">
               Nêu được các ứng dụng quan trọng của alkane; biết cách <b>sử dụng nhiên liệu an toàn, tiết kiệm và phòng chống cháy nổ</b> trong gia đình và trường học!
             </p>
           </div>
@@ -1687,6 +1778,29 @@
 
     </section>
 
+  
+    <!-- ========================================== -->
+    <!-- WEBSITE FOOTER & AUTHOR BRANDING           -->
+    <!-- ========================================== -->
+    <footer class="mt-12 py-8 border-t border-slate-200/80 bg-white/80 backdrop-blur-md">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <img src="logo.png" alt="Logo" class="w-10 h-10 rounded-2xl object-cover border border-slate-200 shadow-xs bg-white p-0.5">
+          <div>
+            <div class="font-black text-xs sm:text-sm text-slate-900 uppercase tracking-wider font-display">HỆ THỐNG BÀI GIẢNG SỐ • KHOA HỌC TỰ NHIÊN 9</div>
+            <div class="text-[11px] text-slate-500 font-semibold">Bài 23: Alkane • Biên soạn & Thiết kế bởi Thầy Hùng • Bộ sách Kết Nối Tri Thức</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2.5 text-xs font-bold text-slate-600">
+          <span class="inline-flex items-center gap-1.5 text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            <span>🌿</span> Chuẩn SGK KHTN 9
+          </span>
+          <span class="inline-flex items-center gap-1.5 text-blue-800 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+            <span>⚡</span> Vercel Ready
+          </span>
+        </div>
+      </div>
+    </footer>
   </main>
 
   <!-- FOOTER -->
@@ -1929,7 +2043,7 @@
       canvas.height = window.innerHeight;
 
       const particles = [];
-      const colors = ['#10b981', '#06b6d4', '#f59e0b', '#ec4899', '#8b5cf6', '#3b82f6'];
+      const colors = ['#10b981', '#06b6d4', '#f59e0b', '#ec4899', '#14b8a6', '#3b82f6'];
 
       for (let i = 0; i < 90; i++) {
         particles.push({
@@ -1985,7 +2099,7 @@
       const lvlBadge = document.getElementById('header-level-badge');
       if (gameState.points >= 150) {
         lvlBadge.textContent = 'Lv.5 Đại Kiện Tướng';
-        lvlBadge.className = 'text-[10px] font-black uppercase tracking-wider text-purple-900 bg-purple-200 px-2 py-0.5 rounded-full';
+        lvlBadge.className = 'text-[10px] font-black uppercase tracking-wider text-teal-900 bg-teal-200 px-2 py-0.5 rounded-full';
         document.getElementById('cert-rank').textContent = 'Xuất Sắc (Hạng S)';
       } else if (gameState.points >= 100) {
         lvlBadge.textContent = 'Lv.4 Chuyên gia';
@@ -3325,8 +3439,14 @@
 <body>
   <div class="container">
     <div class="header">
-      <div style="font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: #64748b;">KHOA HỌC TỰ NHIÊN 9 • KẾT NỐI TRI THỨC</div>
-      <h1 style="font-size: 24px; margin: 6px 0; color: #0f172a;">PHIẾU BÁO CÁO KẾT QUẢ ÔN TẬP: BÀI 23 - ALKANE</h1>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 12px;">
+        <img src="logo.png" alt="Logo" style="width: 52px; height: 52px; border-radius: 14px; object-fit: contain; border: 1px solid #cbd5e1; background: #fff; padding: 2px;">
+        <div style="text-align: left;">
+          <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #059669;">HỆ THỐNG HỌC LIỆU SỐ THẦY HÙNG</div>
+          <div style="font-size: 12px; font-weight: 600; color: #64748b;">KHOA HỌC TỰ NHIÊN 9 • BỘ SÁCH KẾT NỐI TRI THỨC</div>
+        </div>
+      </div>
+      <h1 style="font-size: 22px; margin: 6px 0; color: #0f172a; font-weight: 900;">PHIẾU BÁO CÁO KẾT QUẢ ÔN TẬP: BÀI 23 - ALKANE</h1>
       <p style="font-size: 13px; color: #64748b; margin: 0;">Thời gian nộp bài: ${timeStr} ngày ${dateStr}</p>
     </div>
 
@@ -3415,8 +3535,14 @@
         </head>
         <body>
           <div class="header">
-            <h3>PHIẾU ĐIỂM ÔN TẬP KHTN 9 - BÀI 23: ALKANE</h3>
-            <div>Thang điểm 10.0 • 20 câu hỏi trắc nghiệm</div>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px;">
+              <img src="logo.png" alt="Logo Thầy Hùng" style="width: 44px; height: 44px; border-radius: 10px; border: 1px solid #000; object-fit: contain;">
+              <div style="text-align: left;">
+                <div style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #475569;">HỆ THỐNG HỌC LIỆU SỐ THẦY HÙNG • KHTN 9</div>
+                <h3 style="margin: 0; font-size: 18px; color: #000;">PHIẾU ĐIỂM ÔN TẬP: BÀI 23 - ALKANE</h3>
+              </div>
+            </div>
+            <div style="font-size: 12px; color: #334155;">Thang điểm 10.0 • 20 câu hỏi trắc nghiệm phân hóa</div>
           </div>
           <div class="summary-box">
             <b>Học sinh:</b> ${studentName} &nbsp;|&nbsp; 
