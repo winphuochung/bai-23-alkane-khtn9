@@ -1575,7 +1575,7 @@
           <div class="flex items-center justify-between flex-wrap gap-2 pt-1 pb-2">
             <span class="text-xs font-bold text-slate-500">Các phương thức lưu trữ & nộp bài:</span>
             <button onclick="configGASUrl()" class="text-xs text-emerald-700 hover:text-emerald-800 font-extrabold flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 px-3 py-1 rounded-xl border border-emerald-200 transition">
-              <span>⚙️</span> <span id="gas-config-text">Cấu hình Google Apps Script</span>
+              <span>⚙️</span> <span id="gas-config-text">Đã kết nối Google Sheet ✓</span>
             </button>
           </div>
 
@@ -3694,10 +3694,11 @@
         /* ========================================================
        18. LIÊN KẾT GOOGLE APPS SCRIPT (LIVE GOOGLE SHEET SYNC)
        ======================================================== */
+    const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbxz93g5DU6aGJyQ2_doWHNWlEGvmh05LOMlDkTMwvcCqy24aa7XAk3IDAI2FAEBHchZ/exec';
     const GAS_STORAGE_KEY = 'khtn9_gas_web_app_url';
 
     function getGASUrl() {
-      return localStorage.getItem(GAS_STORAGE_KEY) || '';
+      return localStorage.getItem(GAS_STORAGE_KEY) || DEFAULT_GAS_URL;
     }
 
     function configGASUrl() {
