@@ -1572,23 +1572,36 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-            <!-- Nút 1: Tải file & mở Google Drive -->
+          <div class="flex items-center justify-between flex-wrap gap-2 pt-1 pb-2">
+            <span class="text-xs font-bold text-slate-500">Các phương thức lưu trữ & nộp bài:</span>
+            <button onclick="configGASUrl()" class="text-xs text-emerald-700 hover:text-emerald-800 font-extrabold flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 px-3 py-1 rounded-xl border border-emerald-200 transition">
+              <span>⚙️</span> <span id="gas-config-text">Cấu hình Google Apps Script</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+            <!-- Nút 1: Gửi điểm tự động lên Google Sheet qua Apps Script -->
+            <button onclick="sendScoreToGoogleSheet()" id="btn-gas-sync" class="px-4 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-black text-xs sm:text-sm shadow-md hover:shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
+              <span>📊</span>
+              <span>Gửi Lên Google Sheet</span>
+            </button>
+
+            <!-- Nút 2: Tải file & mở Google Drive -->
             <button onclick="saveAndOpenGoogleDrive()" class="px-4 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs sm:text-sm shadow-md hover:shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
               <span>🚀</span>
-              <span>Tải File & Mở Google Drive</span>
+              <span>Tải File & Mở Drive</span>
             </button>
 
-            <!-- Nút 2: In / Lưu PDF vào Google Drive -->
-            <button onclick="printQuizResult()" class="px-4 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md hover:shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
+            <!-- Nút 3: In / Lưu PDF vào Google Drive -->
+            <button onclick="printQuizResult()" class="px-4 py-3 rounded-2xl bg-slate-800 hover:bg-slate-900 text-white font-black text-xs sm:text-sm shadow-md hover:shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
               <span>🖨️</span>
-              <span>In / Xuất PDF (Save to Drive)</span>
+              <span>In / Xuất PDF</span>
             </button>
 
-            <!-- Nút 3: Sao chép kết quả gửi Zalo/Classroom -->
-            <button onclick="copyQuizResult()" id="btn-copy-result" class="px-4 py-3 rounded-2xl bg-white border-2 border-slate-300 hover:bg-slate-50 text-slate-700 font-black text-xs sm:text-sm shadow-sm transition active:scale-95 flex items-center justify-center gap-2">
+            <!-- Nút 4: Sao chép kết quả gửi Zalo/Classroom -->
+            <button onclick="copyQuizResult()" id="btn-copy-result" class="px-4 py-3 rounded-2xl bg-white border-2 border-slate-300 hover:bg-slate-50 text-slate-700 font-black text-xs sm:text-sm shadow-xs transition active:scale-95 flex items-center justify-center gap-2">
               <span>📋</span>
-              <span>Sao chép kết quả tóm tắt</span>
+              <span>Sao chép kết quả</span>
             </button>
           </div>
 
@@ -1934,6 +1947,7 @@
       playSound('fanfare');
       triggerConfetti(2500);
       renderBadgeGrid();
+      updateGASButtonStatus();
     }
 
     function closeBadgeModal() {
@@ -2194,6 +2208,7 @@
       }
       if (tabId === 'tab-summary') {
         renderBadgeGrid();
+      updateGASButtonStatus();
       }
     }
 
@@ -2236,6 +2251,7 @@
       if (classBadge) classBadge.textContent = '---';
 
       renderBadgeGrid();
+      updateGASButtonStatus();
       updateGlobalProgress();
 
       // Show start screen
@@ -2297,6 +2313,7 @@
       initTFActivity();
       updateGlobalProgress();
       renderBadgeGrid();
+      updateGASButtonStatus();
 
       // Show Start Screen again
       const startScreen = document.getElementById('game-start-screen');
@@ -3371,6 +3388,8 @@
 
       gameState.completedTasks.quiz = true;
       updateGlobalProgress();
+      // Tự động đồng bộ Google Apps Script nếu đã cấu hình link
+      if (getGASUrl()) { sendScoreToGoogleSheet(true); }
 
       // Render 20 Review Questions with Answers and Explanations
       renderQuizReviewList();
@@ -3672,12 +3691,124 @@
     /* ========================================================
        16. KHỞI TẠO BAN ĐẦU
        ======================================================== */
+        /* ========================================================
+       18. LIÊN KẾT GOOGLE APPS SCRIPT (LIVE GOOGLE SHEET SYNC)
+       ======================================================== */
+    const GAS_STORAGE_KEY = 'khtn9_gas_web_app_url';
+
+    function getGASUrl() {
+      return localStorage.getItem(GAS_STORAGE_KEY) || '';
+    }
+
+    function configGASUrl() {
+      const currentUrl = getGASUrl();
+      const promptMsg = 'Nhập URL Ứng dụng web Google Apps Script (Web App URL) của Thầy Cô:\n\n(Dạng: https://script.google.com/macros/s/.../exec)\n\nĐể trống và bấm OK nếu muốn xóa link.';
+      const newUrl = prompt(promptMsg, currentUrl);
+      
+      if (newUrl !== null) {
+        const cleanUrl = newUrl.trim();
+        if (cleanUrl) {
+          localStorage.setItem(GAS_STORAGE_KEY, cleanUrl);
+          alert('✅ Đã lưu cấu hình Google Apps Script thành công!\n\nĐiểm số học sinh sẽ được tự động lưu trực tiếp vào Google Trang tính khi nộp bài.');
+        } else {
+          localStorage.removeItem(GAS_STORAGE_KEY);
+          alert('Đã xóa liên kết Google Apps Script.');
+        }
+        updateGASButtonStatus();
+      }
+    }
+
+    function updateGASButtonStatus() {
+      const url = getGASUrl();
+      const labelEl = document.getElementById('gas-config-text');
+      if (labelEl) {
+        labelEl.textContent = url ? 'Đã liên kết Google Sheet ✓' : 'Cấu hình Google Apps Script';
+      }
+    }
+
+    function getWrongQuestionsSummary() {
+      const wrongs = [];
+      quizQuestions.forEach((q, idx) => {
+        if (userAnswers[idx] !== q.answer) {
+          wrongs.push(`Câu ${idx + 1}`);
+        }
+      });
+      return wrongs.length > 0 ? wrongs.join(', ') : 'Đúng tất cả 20/20 câu';
+    }
+
+    async function sendScoreToGoogleSheet(isAuto = false) {
+      let scriptUrl = getGASUrl();
+
+      if (!scriptUrl) {
+        if (isAuto) return; // Không làm phiền học sinh nếu thầy cô chưa cài đặt link
+        const enteredUrl = prompt('Chưa cấu hình Google Apps Script!\n\nVui lòng dán link Web App (Google Apps Script) để gửi điểm vào Google Sheet:\n(https://script.google.com/macros/s/.../exec)');
+        if (enteredUrl && enteredUrl.trim()) {
+          scriptUrl = enteredUrl.trim();
+          localStorage.setItem(GAS_STORAGE_KEY, scriptUrl);
+          updateGASButtonStatus();
+        } else {
+          return;
+        }
+      }
+
+      const syncBtn = document.getElementById('btn-gas-sync');
+      if (syncBtn && !isAuto) {
+        syncBtn.disabled = true;
+        syncBtn.innerHTML = '<span>⏳</span> <span>Đang gửi điểm...</span>';
+      }
+
+      const payload = {
+        studentName: gameState.playerName || 'Học sinh',
+        studentClass: gameState.playerClass || '9A1',
+        score10: quizScore10,
+        correctCount: correctCount,
+        totalQuestions: quizQuestions.length,
+        pointsXP: gameState.points || (correctCount * 5),
+        wrongDetails: getWrongQuestionsSummary(),
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        // Gửi qua fetch với text/plain để tránh bị preflight CORS chặn
+        await fetch(scriptUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (syncBtn && !isAuto) {
+          syncBtn.innerHTML = '<span>✅</span> <span>Đã gửi lên Sheet!</span>';
+          setTimeout(() => {
+            syncBtn.disabled = false;
+            syncBtn.innerHTML = '<span>📊</span> <span>Gửi Lên Google Sheet</span>';
+          }, 3500);
+        }
+
+        if (!isAuto) {
+          alert(`🎉 THÀNH CÔNG!\n\nĐiểm số của học sinh ${payload.studentName} (Lớp ${payload.studentClass}) - ${payload.score10.toFixed(1)}/10.0 điểm đã được lưu trực tiếp vào Google Trang tính của Thầy Cô!`);
+        }
+      } catch (err) {
+        console.error('Lỗi gửi điểm:', err);
+        if (syncBtn && !isAuto) {
+          syncBtn.disabled = false;
+          syncBtn.innerHTML = '<span>📊</span> <span>Gửi Lên Google Sheet</span>';
+        }
+        if (!isAuto) {
+          alert('Không thể kết nối đến Google Apps Script. Vui lòng kiểm tra lại URL hoặc kết nối mạng!');
+        }
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       initClassifierActivity();
       initMatchingActivity();
       initTFActivity();
       renderQuizQuestion();
       renderBadgeGrid();
+      updateGASButtonStatus();
       updateGlobalProgress();
 
       const today = new Date();
