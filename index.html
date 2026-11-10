@@ -239,11 +239,19 @@
 
       <!-- Form Đăng ký người chơi -->
       <div class="mt-5 p-4 sm:p-5 bg-slate-50/90 rounded-2xl border border-slate-200/90 text-left space-y-3.5 shadow-inner">
-        <div>
-          <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1.5">
-            👤 Tên học sinh (hiển thị trên Giấy khen & Báo cáo Drive):
-          </label>
-          <input type="text" id="start-student-name" placeholder="Ví dụ: Nguyễn Văn An" class="w-full px-4 py-3 rounded-xl border-2 border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none font-bold text-slate-900 text-base shadow-xs transition" value="Nguyễn Văn An">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1.5">
+              👤 Tên học sinh:
+            </label>
+            <input type="text" id="start-student-name" placeholder="Ví dụ: Nguyễn Văn An" class="w-full px-4 py-3 rounded-xl border-2 border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none font-bold text-slate-900 text-base shadow-xs transition" value="Nguyễn Văn An">
+          </div>
+          <div>
+            <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1.5">
+              🏫 Lớp:
+            </label>
+            <input type="text" id="start-student-class" placeholder="VD: 9A1, 9/2..." class="w-full px-4 py-3 rounded-xl border-2 border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none font-bold text-slate-900 text-base shadow-xs transition uppercase" value="9A1">
+          </div>
         </div>
 
         <div>
@@ -344,7 +352,8 @@
             <div class="text-[11px] sm:text-xs font-semibold text-slate-500 flex items-center gap-2 mt-1 flex-wrap">
               <span class="flex items-center gap-1.5 text-slate-800 font-bold bg-slate-100/90 px-2.5 py-1 rounded-xl border border-slate-200/70 shadow-xs">
                 <span id="header-avatar" class="text-sm">🧑‍🔬</span> 
-                <span id="header-student-name" class="truncate max-w-[130px] sm:max-w-none">Nguyễn Văn An</span>
+                <span id="header-student-name" class="truncate max-w-[110px] sm:max-w-none">Nguyễn Văn An</span>
+                <span id="header-student-class" class="text-emerald-800 bg-emerald-100/90 border border-emerald-300 px-1.5 py-0.5 rounded-md font-black text-[10px]">9A1</span>
               </span>
               <span id="header-level-badge" class="text-teal-800 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-lg font-bold hidden md:inline">Lv.1 Tập sự</span>
               <span id="header-streak-badge" class="text-orange-600 font-extrabold hidden">🔥 Chuỗi x1</span>
@@ -1740,6 +1749,9 @@
             <div id="cert-student-name" class="text-2xl sm:text-3xl font-black text-emerald-800 uppercase tracking-wide my-1">
               NGUYỄN VĂN AN
             </div>
+            <div id="cert-student-class" class="text-xs sm:text-sm font-black text-amber-900 tracking-wider uppercase mb-1">
+              LỚP: 9A1
+            </div>
             <p class="text-xs text-slate-600 max-w-md mx-auto">
               Đã xuất sắc hoàn thành tất cả các nhiệm vụ tương tác, thí nghiệm ảo và đạt thành tích cao trong Đấu trường Tri thức Alkane!
             </p>
@@ -1833,6 +1845,7 @@
        ======================================================== */
     const gameState = {
       playerName: 'Nguyễn Văn An',
+      playerClass: '9A1',
       playerAvatar: '🧑‍🔬',
       playerTitle: 'Thám tử Hóa học',
       points: 0,
@@ -2187,6 +2200,64 @@
     /* ========================================================
        7. NÚT CHƠI LẠI TOÀN BỘ GAME (RESTART GAME)
        ======================================================== */
+        /* ========================================================
+       17. ĐĂNG XUẤT HỌC SINH (LOGOUT & SWITCH PLAYER)
+       ======================================================== */
+    function logoutStudent() {
+      const currentName = gameState.playerName || 'học sinh';
+      const currentClass = gameState.playerClass ? ` (Lớp ${gameState.playerClass})` : '';
+      if (!confirm(`Em có chắc chắn muốn đăng xuất tài khoản "${currentName}${currentClass}" để học sinh khác đăng nhập không?`)) {
+        return;
+      }
+
+      // Reset state
+      gameState.playerName = '';
+      gameState.playerClass = '';
+      gameState.points = 0;
+      gameState.streak = 0;
+      gameState.completedTasks = {
+        warmup: false,
+        concept: false,
+        structure: false,
+        lab: false,
+        application: false,
+        quiz: false
+      };
+
+      // Reset badges
+      Object.keys(gameState.badges).forEach(key => {
+        gameState.badges[key].unlocked = false;
+      });
+
+      // Update UI
+      document.getElementById('user-points').textContent = '0';
+      document.getElementById('header-student-name').textContent = 'Chưa đăng nhập';
+      const classBadge = document.getElementById('header-student-class');
+      if (classBadge) classBadge.textContent = '---';
+
+      renderBadgeGrid();
+      updateGlobalProgress();
+
+      // Show start screen
+      const startScreen = document.getElementById('game-start-screen');
+      startScreen.classList.remove('hidden');
+
+      // Clear input fields & autofocus
+      const nameInput = document.getElementById('start-student-name');
+      const classInput = document.getElementById('start-student-class');
+      if (nameInput) {
+        nameInput.value = '';
+        setTimeout(() => nameInput.focus(), 300);
+      }
+      if (classInput) {
+        classInput.value = '';
+      }
+
+      // Go back to first tab
+      switchTab('tab-intro');
+      playSound('pop');
+    }
+
     function confirmRestartGame() {
       if (confirm('Em có chắc chắn muốn chơi lại từ đầu không? Điểm số và các thử thách sẽ được làm mới!')) {
         restartEntireGame();
@@ -3405,10 +3476,11 @@
        ======================================================== */
     function saveAndOpenGoogleDrive() {
       const studentName = gameState.playerName || 'Học sinh';
+      const studentClass = gameState.playerClass || '9A1';
       const now = new Date();
       const dateStr = now.toLocaleDateString('vi-VN');
       const timeStr = now.toLocaleTimeString('vi-VN');
-      const filename = `Ket_Qua_Bai23_Alkane_${studentName.replace(/\s+/g, '_')}_${dateStr.replace(/\//g, '-')}.html`;
+      const filename = `Ket_Qua_Bai23_Alkane_${studentName.replace(/\s+/g, '_')}_Lop_${studentClass.replace(/\s+/g, '_')}_${dateStr.replace(/\//g, '-')}.html`;
 
       // Tạo nội dung file báo cáo học tập HTML hoàn chỉnh, độc lập
       let questionsRows = '';
@@ -3463,8 +3535,9 @@
       <p style="font-size: 13px; color: #64748b; margin: 0;">Thời gian nộp bài: ${timeStr} ngày ${dateStr}</p>
     </div>
 
-    <div style="background: #f1f5f9; padding: 16px; border-radius: 14px; margin-bottom: 20px; display: flex; justify-content: space-around; flex-wrap: wrap;">
-      <div><b>👤 Học sinh:</b> <span style="color: #0284c7;">${studentName}</span></div>
+    <div style="background: #f1f5f9; padding: 16px; border-radius: 14px; margin-bottom: 20px; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 10px;">
+      <div><b>👤 Học sinh:</b> <span style="color: #0284c7; font-weight: bold;">${studentName}</span></div>
+      <div><b>🏫 Lớp:</b> <span style="color: #0d9488; font-weight: bold;">${studentClass}</span></div>
       <div><b>🏆 Thang điểm 10:</b> <span style="color: #059669; font-weight: 900; font-size: 18px;">${quizScore10.toFixed(1)} / 10.0</span></div>
       <div><b>✅ Số câu đúng:</b> <span style="color: #4f46e5; font-weight: bold;">${correctCount} / ${quizQuestions.length} câu</span></div>
     </div>
@@ -3559,6 +3632,7 @@
           </div>
           <div class="summary-box">
             <b>Học sinh:</b> ${studentName} &nbsp;|&nbsp; 
+            <b>Lớp:</b> ${gameState.playerClass || '9A1'} &nbsp;|&nbsp; 
             <b>Ngày:</b> ${dateStr} &nbsp;|&nbsp; 
             <b>Điểm số (Thang 10):</b> <b style="font-size: 16px; color: #059669;">${quizScore10.toFixed(1)} / 10.0</b> &nbsp;|&nbsp; 
             <b>Số câu đúng:</b> ${correctCount} / ${quizQuestions.length}
@@ -3579,7 +3653,7 @@
       const studentName = gameState.playerName || 'Học sinh';
       const now = new Date();
       const dateStr = now.toLocaleDateString('vi-VN');
-      const text = `🎓 BÁO CÁO KẾT QUẢ ÔN TẬP KHTN 9 - BÀI 23: ALKANE\n👤 Học sinh: ${studentName}\n📅 Ngày hoàn thành: ${dateStr}\n🏆 Điểm số (Thang 10): ${quizScore10.toFixed(1)} / 10.0 điểm\n✅ Số câu đúng: ${correctCount} / ${quizQuestions.length} câu (${Math.round((correctCount/quizQuestions.length)*100)}%)\n⭐ Đã nộp và lưu trữ kết quả bài học.`;
+      const text = `🎓 BÁO CÁO KẾT QUẢ ÔN TẬP KHTN 9 - BÀI 23: ALKANE\n👤 Học sinh: ${studentName}\n🏫 Lớp: ${gameState.playerClass || '9A1'}\n📅 Ngày hoàn thành: ${dateStr}\n🏆 Điểm số (Thang 10): ${quizScore10.toFixed(1)} / 10.0 điểm\n✅ Số câu đúng: ${correctCount} / ${quizQuestions.length} câu (${Math.round((correctCount/quizQuestions.length)*100)}%)\n⭐ Đã nộp và lưu trữ kết quả bài học.`;
 
       navigator.clipboard.writeText(text).then(() => {
         const btn = document.getElementById('btn-copy-result');
