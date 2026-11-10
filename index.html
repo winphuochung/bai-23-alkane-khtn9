@@ -323,39 +323,40 @@
   <!-- ======================================================== -->
   <!-- TOP HEADER (GAME DASHBOARD)                              -->
   <!-- ======================================================== -->
-  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-xs transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5">
-      <div class="flex items-center justify-between gap-3">
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-sm transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5">
+      <div class="flex items-center justify-between gap-3 sm:gap-4">
         
-        <!-- LOGO CÁ NHÂN & THÔNG TIN HỌC SINH -->
-        <div class="flex items-center gap-3 min-w-0">
-          <!-- Logo cá nhân kích thước lớn, sắc nét, không vỡ layout -->
-          <div class="relative group cursor-pointer flex-shrink-0" onclick="switchTab('tab-intro')" title="Hệ thống học liệu số KHTN 9">
-            <img src="logo.png" alt="Logo Cá Nhân" class="w-14 h-14 sm:w-16 sm:h-16 md:w-[70px] md:h-[70px] rounded-2xl object-contain shadow-md border-2 border-emerald-500 bg-white p-1 hover:scale-105 transition duration-200">
-            <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[9px] text-white font-black shadow-xs" title="Tác giả">✓</span>
+        <!-- LOGO CÁ NHÂN KÍCH THƯỚC LỚN & THÔNG TIN HỌC SINH -->
+        <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+          <!-- Logo cá nhân lớn sắc nét (80px - 100px), viền ngọc lục bảo sang trọng -->
+          <div class="relative group cursor-pointer flex-shrink-0" onclick="switchTab('tab-intro')" title="KHTN 9: Bài 23 - Alkane">
+            <img src="logo.png" alt="Logo Giáo Viên Hóa Học Lê Văn Thắng" class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-[100px] lg:h-[100px] rounded-2xl sm:rounded-3xl object-contain shadow-md border-2 border-emerald-500 bg-white p-1 hover:scale-105 transition-transform duration-200">
+            <span class="absolute -bottom-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[10px] sm:text-xs text-white font-black shadow-xs" title="Chứng nhận">✓</span>
           </div>
 
           <div class="min-w-0">
             <div class="flex items-center gap-2">
-              <span class="font-black text-slate-900 text-sm sm:text-base md:text-lg leading-tight tracking-tight truncate">KHTN 9: BÀI 23 - ALKANE</span>
+              <h1 class="font-black text-slate-900 text-sm sm:text-base md:text-xl leading-tight tracking-tight font-display truncate">
+                KHTN 9: BÀI 23 - ALKANE
+              </h1>
             </div>
-            <div class="text-[11px] sm:text-xs font-semibold text-slate-500 flex items-center gap-2 mt-0.5 flex-wrap">
-              <span class="flex items-center gap-1 text-slate-800 font-bold">
-                <span id="header-avatar" class="text-xs">🧑‍🔬</span> 
-                <span id="header-student-name" class="truncate max-w-[120px] sm:max-w-none">Nguyễn Văn An</span>
+            <div class="text-[11px] sm:text-xs font-semibold text-slate-500 flex items-center gap-2 mt-1 flex-wrap">
+              <span class="flex items-center gap-1.5 text-slate-800 font-bold bg-slate-100/90 px-2.5 py-1 rounded-xl border border-slate-200/70 shadow-xs">
+                <span id="header-avatar" class="text-sm">🧑‍🔬</span> 
+                <span id="header-student-name" class="truncate max-w-[130px] sm:max-w-none">Nguyễn Văn An</span>
               </span>
-              <span class="text-slate-300 hidden sm:inline">•</span>
-              <span id="header-level-badge" class="text-teal-700 font-bold hidden sm:inline">Lv.1 Tập sự</span>
+              <span id="header-level-badge" class="text-teal-800 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-lg font-bold hidden md:inline">Lv.1 Tập sự</span>
               <span id="header-streak-badge" class="text-orange-600 font-extrabold hidden">🔥 Chuỗi x1</span>
             </div>
           </div>
         </div>
 
-        <!-- Điểm số, Huy hiệu & Nút Chơi lại -->
-        <div class="flex items-center gap-2 sm:gap-3">
+        <!-- ĐIỂM SỐ, HUY HIỆU, ÂM THANH & NÚT ĐĂNG XUẤT HỌC SINH -->
+        <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           
           <!-- Điểm số XP -->
-          <div class="flex items-center gap-1.5 bg-amber-50/90 border border-amber-300 px-3 py-1 rounded-full shadow-xs">
+          <div class="flex items-center gap-1.5 bg-amber-50/90 border border-amber-300 px-2.5 sm:px-3 py-1 rounded-full shadow-xs">
             <span class="text-base sm:text-lg">⭐</span>
             <div class="flex flex-col text-left">
               <span class="text-[9px] uppercase font-black text-amber-700 leading-none">Điểm XP</span>
@@ -363,8 +364,8 @@
             </div>
           </div>
 
-          <!-- Bộ sưu tập Huy hiệu Nhanh -->
-          <div class="hidden md:flex items-center gap-1 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full shadow-xs" title="Bộ sưu tập Huy hiệu">
+          <!-- Bộ sưu tập Huy hiệu Nhanh (Desktop) -->
+          <div class="hidden lg:flex items-center gap-1 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full shadow-xs" title="Bộ sưu tập Huy hiệu">
             <span id="badge-icon-1" class="text-base opacity-25 grayscale transition-all" title="Huy hiệu 1: Khởi Động Nhanh">🥉</span>
             <span id="badge-icon-2" class="text-base opacity-25 grayscale transition-all" title="Huy hiệu 2: Thợ Săn Hydrocarbon">🥈</span>
             <span id="badge-icon-3" class="text-base opacity-25 grayscale transition-all" title="Huy hiệu 3: Bậc Thầy Phân Tử">🧬</span>
@@ -373,13 +374,18 @@
           </div>
 
           <!-- Nút Âm thanh -->
-          <button id="sound-toggle-btn" onclick="toggleSound()" title="Bật/Tắt âm thanh" class="w-9 h-9 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-slate-700 transition shadow-xs active:scale-95">
-            <span id="sound-icon" class="text-lg">🔊</span>
+          <button id="sound-toggle-btn" onclick="toggleSound()" title="Bật/Tắt âm thanh" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-slate-700 transition shadow-xs active:scale-95">
+            <span id="sound-icon" class="text-base sm:text-lg">🔊</span>
           </button>
 
           <!-- NÚT CHƠI LẠI TRÊN HEADER -->
-          <button onclick="confirmRestartGame()" title="Chơi lại từ đầu" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs transition active:scale-95 flex items-center gap-1 border border-slate-300">
+          <button onclick="confirmRestartGame()" title="Chơi lại bài học từ đầu" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs transition active:scale-95 flex items-center gap-1 border border-slate-300">
             <span>🔄</span> <span class="hidden md:inline">Chơi lại</span>
+          </button>
+
+          <!-- NÚT ĐĂNG XUẤT HỌC SINH MỚI -->
+          <button onclick="logoutStudent()" title="Đăng xuất / Đổi học sinh" class="px-2.5 sm:px-3.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-extrabold text-xs transition active:scale-95 flex items-center gap-1.5 border border-rose-300 shadow-xs">
+            <span>🚪</span> <span class="hidden sm:inline">Đăng xuất</span>
           </button>
 
         </div>
