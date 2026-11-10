@@ -882,8 +882,8 @@
         
         <div class="flex flex-col lg:flex-row gap-6 items-center">
           
-          <!-- SÂN KHẤU MÔ PHỎNG ĐỘNG -->
-          <div class="w-full lg:w-7/12 bg-slate-900 rounded-3xl p-5 relative overflow-hidden flex flex-col items-center justify-between min-h-[350px] shadow-2xl border-4 border-slate-800">
+          <!-- SÂN KHẤU MÔ PHỎNG ĐỘNG (Đúng 100% Hình 23.2 & SGK Trang 104) -->
+          <div class="w-full lg:w-7/12 bg-slate-900 rounded-3xl p-5 relative overflow-hidden flex flex-col items-center justify-between min-h-[360px] shadow-2xl border-4 border-slate-800">
             <div class="w-full flex items-center justify-between z-10">
               <span class="text-[11px] font-mono font-bold text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-800">
                 LAB VIRTUAL • BUTANE (C₄H₁₀)
@@ -893,49 +893,107 @@
               </span>
             </div>
 
-            <!-- Vùng đồ họa SVG mô phỏng Hình 23.2 -->
-            <div class="relative w-full h-56 flex items-center justify-center z-10 my-1">
-              
-              <!-- Giá đỡ thí nghiệm -->
-              <div class="absolute left-1/2 -translate-x-1/2 w-48 h-full pointer-events-none">
-                <div class="absolute left-8 top-3 bottom-3 w-2 bg-slate-600 rounded"></div>
-                <div class="absolute left-8 top-12 w-16 h-2 bg-slate-500 rounded"></div>
-              </div>
+            <!-- Vùng đồ họa SVG mô phỏng chính xác 2 bước SGK -->
+            <div class="relative w-full h-64 flex items-center justify-center z-10 my-1 overflow-hidden">
+              <svg id="lab-main-svg" viewBox="0 0 280 230" class="w-full h-full max-w-sm">
+                <defs>
+                  <linearGradient id="flameGradOuter" x1="0%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stop-color="#06b6d4" />
+                    <stop offset="35%" stop-color="#f59e0b" />
+                    <stop offset="100%" stop-color="#ea580c" />
+                  </linearGradient>
+                  <radialGradient id="steamGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="rgba(224, 242, 254, 0.65)" />
+                    <stop offset="100%" stop-color="rgba(224, 242, 254, 0.05)" />
+                  </radialGradient>
+                </defs>
 
-              <!-- Bình tam giác úp ngược -->
-              <div id="flask-container" class="relative transition-all duration-700 transform flex flex-col items-center">
-                <svg id="flask-svg" width="120" height="140" viewBox="0 0 130 150">
-                  <path id="flask-body" d="M 50 10 L 80 10 L 80 35 L 120 125 A 10 10 0 0 1 110 140 L 20 140 A 10 10 0 0 1 10 125 L 50 35 Z" 
-                        fill="rgba(255, 255, 255, 0.15)" stroke="#94a3b8" stroke-width="3" />
-                  
-                  <!-- Hơi nước bám mờ thành bình -->
-                  <g id="flask-steam" class="opacity-0 transition-opacity duration-700">
-                    <ellipse cx="65" cy="80" rx="35" ry="40" fill="rgba(224, 242, 254, 0.45)" filter="blur(3px)" />
-                    <circle cx="50" cy="70" r="3" fill="#bae6fd" opacity="0.8"/>
-                    <circle cx="75" cy="85" r="3.5" fill="#bae6fd" opacity="0.8"/>
-                    <circle cx="60" cy="100" r="2.5" fill="#bae6fd" opacity="0.8"/>
-                    <text x="65" y="110" fill="#38bdf8" font-size="9" font-weight="bold" text-anchor="middle">Hơi nước (H₂O) đọng mờ</text>
+                <!-- ================= SCENE 1: BƯỚC 1 (ĐÚNG HÌNH 23.2 SGK) ================= -->
+                <!-- Bình tam giác úp ngược trên giá sắt, bật lửa gas đưa vào miệng bình -->
+                <g id="lab-scene-step1" class="transition-opacity duration-500">
+                  <!-- Giá sắt kẹp thí nghiệm -->
+                  <rect x="25" y="212" width="70" height="8" rx="2" fill="#334155" />
+                  <rect x="56" y="20" width="6" height="194" rx="2" fill="#475569" />
+                  <rect x="52" y="112" width="14" height="12" rx="2" fill="#1e293b" />
+                  <rect x="62" y="116" width="60" height="5" rx="1.5" fill="#64748b" />
+                  <path d="M 120 110 L 126 110 L 126 128 L 120 128" fill="none" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+
+                  <!-- BÌNH TAM GIÁC ÚP NGƯỢC (Đáy ở trên y=45, miệng ở dưới y=135) -->
+                  <path id="step1-flask-glass" d="M 130 135 L 150 135 L 150 115 L 195 48 A 6 6 0 0 0 190 40 L 90 40 A 6 6 0 0 0 85 48 L 130 115 Z" 
+                        fill="rgba(255, 255, 255, 0.15)" stroke="#cbd5e1" stroke-width="2.5" stroke-linejoin="round" />
+                  <ellipse cx="140" cy="135" rx="11" ry="3" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+
+                  <!-- Hơi nước đọng mờ bên trong thành bình (Hiện khi bật lửa cháy) -->
+                  <g id="step1-steam" class="opacity-0 transition-opacity duration-700">
+                    <path d="M 94 45 L 186 45 L 146 110 L 134 110 Z" fill="url(#steamGlow)" filter="blur(2px)"/>
+                    <circle cx="110" cy="55" r="2.5" fill="#bae6fd" opacity="0.9"/>
+                    <circle cx="130" cy="50" r="3" fill="#ffffff" opacity="0.95"/>
+                    <circle cx="150" cy="52" r="2" fill="#bae6fd" opacity="0.8"/>
+                    <circle cx="170" cy="58" r="2.5" fill="#ffffff" opacity="0.9"/>
+                    <circle cx="120" cy="75" r="3" fill="#bae6fd" opacity="0.9"/>
+                    <circle cx="160" cy="78" r="2.5" fill="#ffffff" opacity="0.85"/>
+                    <circle cx="140" cy="90" r="2" fill="#bae6fd" opacity="0.8"/>
+                    <!-- Nhãn chú thích hơi nước phía trên đáy bình -->
+                    <rect x="65" y="10" width="150" height="20" rx="10" fill="rgba(15, 23, 42, 0.9)" stroke="#38bdf8" stroke-width="1.5"/>
+                    <text x="140" y="24" fill="#38bdf8" font-size="9" font-weight="bold" text-anchor="middle">Hơi nước (H₂O) đọng mờ thành bình</text>
                   </g>
 
-                  <!-- Nước vôi trong đục trắng -->
-                  <g id="flask-liquid" class="opacity-0 transition-opacity duration-700">
-                    <path id="liquid-color" d="M 22 135 L 108 135 L 100 110 L 30 110 Z" fill="rgba(241, 245, 249, 0.3)" />
-                    <text id="liquid-label" x="65" y="125" fill="#f8fafc" font-size="8" font-weight="bold" text-anchor="middle">Ca(OH)₂</text>
+                  <!-- BẬT LỬA GAS DÀI ĐƯA TỪ DƯỚI LÊN MIỆNG BÌNH (Hình 23.2 SGK) -->
+                  <g id="step1-lighter-group">
+                    <rect x="138" y="125" width="4" height="25" rx="1" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1"/>
+                    <rect x="133" y="150" width="14" height="60" rx="4" fill="#059669" stroke="#10b981" stroke-width="1.5"/>
+                    <text x="140" y="183" fill="#ffffff" font-size="7" font-weight="900" text-anchor="middle" transform="rotate(-90 140 183)">BUTANE</text>
+
+                    <!-- Ngọn lửa cháy bên trong bình -->
+                    <g id="step1-flame" class="opacity-0 transition-opacity duration-300 flame-anim" style="transform-origin: 140px 125px;">
+                      <path d="M 140 95 C 133 108 133 118 136 125 C 138 127 142 127 144 125 C 147 118 147 108 140 95 Z" fill="url(#flameGradOuter)" filter="drop-shadow(0 0 10px #f97316)"/>
+                      <path d="M 140 105 C 136 114 136 120 138 124 C 139 125 141 125 142 124 C 144 120 144 114 140 105 Z" fill="#67e8f9"/>
+                    </g>
                   </g>
-                </svg>
-              </div>
+                </g>
 
-              <!-- Bật lửa gas dài -->
-              <div id="lighter-container" class="absolute bottom-1 left-1/2 -translate-x-1/2 transition-all duration-500 flex flex-col items-center">
-                <div id="flame-element" class="opacity-0 transition-all duration-300 flex flex-col items-center -mb-1 flame-anim">
-                  <div class="w-3.5 h-8 bg-gradient-to-t from-cyan-400 via-amber-400 to-orange-500 rounded-full blur-[1px] shadow-[0_0_15px_#f97316]"></div>
-                </div>
-                <div class="w-3.5 h-10 bg-slate-300 rounded-t-sm border border-slate-400"></div>
-                <div class="w-7 h-14 bg-gradient-to-b from-emerald-500 to-teal-700 rounded-b-xl border border-emerald-400 flex items-center justify-center shadow-md">
-                  <span class="text-[7px] font-black text-white rotate-90">BUTANE</span>
-                </div>
-              </div>
+                <!-- ================= SCENE 2: BƯỚC 2 (ĐÚNG SGK TRANG 104) ================= -->
+                <!-- Bình quay xuôi lại (đáy ở dưới, miệng ở trên), đậy nút, rót nước vôi trong lắc đục trắng -->
+                <g id="lab-scene-step2" class="opacity-0 pointer-events-none transition-opacity duration-500">
+                  <g id="step2-flask-group" class="transition-transform duration-500 origin-center">
+                    <!-- Chất lỏng ở đáy bình (khi lắc chuyển thành đục trắng) -->
+                    <path id="step2-liquid" d="M 88 174 L 192 174 L 180 135 L 100 135 Z" fill="rgba(241, 245, 249, 0.4)" class="transition-colors duration-700"/>
+                    
+                    <!-- Các hạt kết tủa CaCO3 đục trắng li ti -->
+                    <g id="step2-precipitate" class="opacity-0 transition-opacity duration-700">
+                      <circle cx="115" cy="160" r="2" fill="#ffffff" opacity="0.95"/>
+                      <circle cx="135" cy="168" r="2.5" fill="#ffffff" opacity="0.98"/>
+                      <circle cx="155" cy="158" r="2" fill="#ffffff" opacity="0.95"/>
+                      <circle cx="170" cy="165" r="2.2" fill="#ffffff" opacity="0.9"/>
+                      <circle cx="125" cy="150" r="2" fill="#ffffff" opacity="0.9"/>
+                      <circle cx="145" cy="148" r="2" fill="#ffffff" opacity="0.9"/>
+                      <circle cx="160" cy="152" r="1.8" fill="#ffffff" opacity="0.85"/>
+                    </g>
 
+                    <!-- Thân bình tam giác QUAY XUÔI (miệng y=55 ở trên, đáy y=176 ở dưới) -->
+                    <path d="M 130 55 L 150 55 L 150 75 L 195 168 A 6 6 0 0 1 190 176 L 90 176 A 6 6 0 0 1 85 168 L 130 75 Z" 
+                          fill="rgba(255, 255, 255, 0.15)" stroke="#cbd5e1" stroke-width="2.5" stroke-linejoin="round" />
+                    <ellipse cx="140" cy="55" rx="11" ry="3" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+
+                    <!-- Nút đậy cao su ở miệng bình (SGK: 'đậy bình tam giác bằng nút và lắc đều') -->
+                    <path id="step2-stopper" d="M 129 44 L 151 44 L 148 58 L 132 58 Z" fill="#78350f" stroke="#451a03" stroke-width="1.5" class="transition-transform duration-500"/>
+                    <ellipse cx="140" cy="44" rx="11" ry="2.5" fill="#92400e"/>
+
+                    <!-- Nhãn chú thích ở đáy bình -->
+                    <rect x="45" y="195" width="190" height="22" rx="11" fill="rgba(15, 23, 42, 0.95)" stroke="#10b981" stroke-width="1.5"/>
+                    <text id="step2-liquid-label" x="140" y="210" fill="#a7f3d0" font-size="9" font-weight="bold" text-anchor="middle">
+                      Nước vôi trong Ca(OH)₂
+                    </text>
+                  </g>
+
+                  <!-- Ống nghiệm rót nước vôi trong (Hiệu ứng rót ban đầu) -->
+                  <g id="step2-pouring-tube" class="transition-opacity duration-500">
+                    <path d="M 180 18 L 215 32 L 210 44 L 175 30 Z" fill="rgba(255, 255, 255, 0.3)" stroke="#38bdf8" stroke-width="1.5"/>
+                    <path d="M 175 30 Q 158 40 142 54" fill="none" stroke="#67e8f9" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="3,2"/>
+                    <text x="215" y="22" fill="#38bdf8" font-size="8.5" font-weight="bold">Rót Ca(OH)₂</text>
+                  </g>
+                </g>
+              </svg>
             </div>
 
             <!-- Dòng trạng thái quan sát -->
@@ -947,22 +1005,22 @@
           <!-- BẢNG ĐIỀU KHIỂN & CÂU HỎI QUAN SÁT -->
           <div class="w-full lg:w-5/12 space-y-3.5">
             <h4 class="font-black text-slate-800 text-sm flex items-center gap-2">
-              <span>📋</span> Thao tác thực nghiệm (Hình 23.2):
+              <span>📋</span> Thao tác thực nghiệm (Hình 23.2 SGK):
             </h4>
             
-            <button id="lab-btn-step1" onclick="runLabStep(1, this)" class="w-full p-3 rounded-2xl border-2 border-orange-300 bg-orange-50 hover:bg-orange-100 font-bold text-left text-slate-800 transition flex items-center gap-3">
+            <button id="lab-btn-step1" onclick="runLabStep(1, this)" class="w-full p-3 rounded-2xl border-2 border-orange-300 bg-orange-50 hover:bg-orange-100 font-bold text-left text-slate-800 transition flex items-center gap-3 shadow-xs">
               <span class="w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-black flex-shrink-0">1</span>
               <div>
-                <div class="text-xs font-black text-orange-950">Châm lửa đốt Butane & Úp bình</div>
-                <div class="text-[10px] text-orange-700">Đưa đầu bật lửa vào miệng bình tam giác úp ngược</div>
+                <div class="text-xs font-black text-orange-950">1. Đốt Butane trong bình úp ngược (Hình 23.2)</div>
+                <div class="text-[10px] text-orange-700">Đưa đầu bật lửa vào miệng bình tam giác úp ngược, giữ lửa cháy</div>
               </div>
             </button>
 
-            <button id="lab-btn-step2" onclick="runLabStep(2, this)" disabled class="w-full p-3 rounded-2xl border-2 border-slate-200 bg-slate-50 opacity-60 font-bold text-left text-slate-800 transition flex items-center gap-3 cursor-not-allowed">
+            <button id="lab-btn-step2" onclick="runLabStep(2, this)" disabled class="w-full p-3 rounded-2xl border-2 border-slate-200 bg-slate-50 opacity-60 font-bold text-left text-slate-800 transition flex items-center gap-3 cursor-not-allowed shadow-xs">
               <span class="w-7 h-7 rounded-full bg-slate-400 text-white flex items-center justify-center text-xs font-black flex-shrink-0">2</span>
               <div>
-                <div class="text-xs font-black text-slate-800">Rót nước vôi trong & Lắc đều</div>
-                <div class="text-[10px] text-slate-500">Quay xuôi bình, cho dung dịch Ca(OH)₂ vào và lắc</div>
+                <div class="text-xs font-black text-slate-800">2. Quay xuôi bình, đổ Ca(OH)₂ & lắc đều</div>
+                <div class="text-[10px] text-slate-500">Quay xuôi bình lại, đổ nước vôi trong vào, đậy nút và lắc đều</div>
               </div>
             </button>
 
@@ -2257,23 +2315,32 @@
        12. THÍ NGHIỆM ẢO: BUTANE (Hình 23.2)
        ======================================================== */
     function runLabStep(step, btnEl) {
-      const flame = document.getElementById('flame-element');
-      const steam = document.getElementById('flask-steam');
-      const liquid = document.getElementById('flask-liquid');
-      const liquidColor = document.getElementById('liquid-color');
-      const liquidLabel = document.getElementById('liquid-label');
+      const scene1 = document.getElementById('lab-scene-step1');
+      const scene2 = document.getElementById('lab-scene-step2');
+      const flame = document.getElementById('step1-flame');
+      const steam = document.getElementById('step1-steam');
+      const pouring = document.getElementById('step2-pouring-tube');
+      const flaskGroup = document.getElementById('step2-flask-group');
+      const liquid = document.getElementById('step2-liquid');
+      const precipitate = document.getElementById('step2-precipitate');
+      const liquidLabel = document.getElementById('step2-liquid-label');
       const obsBox = document.getElementById('lab-observation-box');
       const stepIndicator = document.getElementById('lab-step-indicator');
       const btnStep2 = document.getElementById('lab-btn-step2');
       const quizArea = document.getElementById('lab-quiz-area');
 
       if (step === 1) {
+        // BƯỚC 1 (Đúng Hình 23.2 SGK): Bình tam giác ÚP NGƯỢC, châm lửa butane cháy
+        scene1.classList.remove('opacity-0', 'pointer-events-none');
+        scene2.classList.add('opacity-0', 'pointer-events-none');
+
         flame.classList.remove('opacity-0');
         steam.classList.remove('opacity-0');
-        stepIndicator.textContent = 'Bước 1: Ngọn lửa Butane & Hơi nước đọng';
-        obsBox.innerHTML = '🔥 <b class="text-amber-400">Hiện tượng:</b> Sau vài giây, <b>thành trong bình mờ đi</b> do hơi nước (H₂O) ngưng tụ!';
+        stepIndicator.textContent = 'Bước 1: Đốt Butane trong bình úp ngược (Hình 23.2)';
+        obsBox.innerHTML = '🔥 <b class="text-amber-400">Hiện tượng Bước 1 (SGK):</b> Đưa đầu bật lửa vào miệng bình tam giác úp ngược. Khi butane cháy, <b>thành bên trong bình bị mờ đi</b> do có hơi nước (H₂O) ngưng tụ!';
         playSound('correct');
 
+        // Kích hoạt Bước 2
         btnStep2.disabled = false;
         btnStep2.classList.remove('opacity-60', 'cursor-not-allowed', 'border-slate-200', 'bg-slate-50');
         btnStep2.classList.add('border-teal-300', 'bg-teal-50', 'hover:bg-teal-100');
@@ -2283,17 +2350,39 @@
         quizArea.classList.remove('hidden');
         renderLabQuiz(1);
       } else if (step === 2) {
-        flame.classList.add('opacity-0');
-        liquid.classList.remove('opacity-0');
-        liquidColor.setAttribute('fill', 'rgba(255, 255, 255, 0.85)');
-        liquidLabel.textContent = 'CaCO₃ (Đục trắng)';
-        liquidLabel.setAttribute('fill', '#0f172a');
-        stepIndicator.textContent = 'Bước 2: Nước vôi trong bị vẩn đục';
-        obsBox.innerHTML = '🥛 <b class="text-emerald-400">Hiện tượng:</b> Nước vôi trong <b>bị vẩn đục trắng</b>, chứng minh tạo ra khí <b>Carbon dioxide (CO₂)</b>!';
-        playSound('correct');
-        triggerConfetti(1200);
+        // BƯỚC 2 (Đúng SGK T104): Cất bật lửa, quay xuôi bình lại, đổ nước vôi trong, đậy nút và lắc đều!
+        scene1.classList.add('opacity-0', 'pointer-events-none');
+        scene2.classList.remove('opacity-0', 'pointer-events-none');
 
-        renderLabQuiz(2);
+        stepIndicator.textContent = 'Bước 2: Quay xuôi bình, rót Ca(OH)₂ & lắc đều (SGK T104)';
+        obsBox.innerHTML = '🧪 <b class="text-sky-400">Đang thực hiện:</b> Quay xuôi bình tam giác lại, đổ nước vôi trong vào, đậy nút và lắc đều...';
+
+        // 1. Rót nước vôi trong ban đầu (trong suốt)
+        pouring.classList.remove('opacity-0');
+        liquid.setAttribute('fill', 'rgba(224, 242, 254, 0.4)');
+        liquidLabel.textContent = 'Rót nước vôi trong Ca(OH)₂...';
+        precipitate.classList.add('opacity-0');
+
+        setTimeout(() => {
+          // 2. Ẩn ống rót, đậy nút và lắc bình
+          pouring.classList.add('opacity-0');
+          flaskGroup.classList.add('shake');
+
+          setTimeout(() => {
+            flaskGroup.classList.remove('shake');
+            // 3. Nước vôi trong chuyển sang VẨN ĐỤC TRẮNG (CaCO3 kết tủa)
+            liquid.setAttribute('fill', 'rgba(255, 255, 255, 0.92)');
+            precipitate.classList.remove('opacity-0');
+            liquidLabel.textContent = 'Nước vôi trong bị vẩn đục (CaCO₃)';
+            liquidLabel.setAttribute('fill', '#ffffff');
+
+            obsBox.innerHTML = '🥛 <b class="text-emerald-400">Hiện tượng Bước 2 (SGK):</b> Sau khi lắc đều, <b>nước vôi trong bị vẩn đục màu trắng</b>, chứng minh đã tạo ra khí <b>Carbon dioxide (CO₂)</b>!';
+            playSound('correct');
+            triggerConfetti(1200);
+
+            renderLabQuiz(2);
+          }, 800);
+        }, 800);
       }
     }
 
@@ -2358,11 +2447,22 @@
     }
 
     function resetLab() {
-      document.getElementById('flame-element').classList.add('opacity-0');
-      document.getElementById('flask-steam').classList.add('opacity-0');
-      document.getElementById('flask-liquid').classList.add('opacity-0');
+      const scene1 = document.getElementById('lab-scene-step1');
+      const scene2 = document.getElementById('lab-scene-step2');
+      scene1.classList.remove('opacity-0', 'pointer-events-none');
+      scene2.classList.add('opacity-0', 'pointer-events-none');
+
+      document.getElementById('step1-flame').classList.add('opacity-0');
+      document.getElementById('step1-steam').classList.add('opacity-0');
+      document.getElementById('step2-pouring-tube').classList.add('opacity-0');
+      document.getElementById('step2-precipitate').classList.add('opacity-0');
+      document.getElementById('step2-liquid').setAttribute('fill', 'rgba(241, 245, 249, 0.4)');
+      document.getElementById('step2-liquid-label').textContent = 'Nước vôi trong Ca(OH)₂';
+      document.getElementById('step2-liquid-label').setAttribute('fill', '#a7f3d0');
+
       document.getElementById('lab-step-indicator').textContent = 'Bước 1: Chuẩn bị';
       document.getElementById('lab-observation-box').textContent = 'Nhấn nút Thao tác 1 để đánh lửa butane và quan sát thành bình!';
+
       const btn2 = document.getElementById('lab-btn-step2');
       btn2.disabled = true;
       btn2.className = 'w-full p-3 rounded-2xl border-2 border-slate-200 bg-slate-50 opacity-60 font-bold text-left text-slate-800 transition flex items-center gap-3 cursor-not-allowed';
