@@ -214,10 +214,10 @@
       <div class="absolute -top-16 -right-16 w-56 h-56 bg-emerald-400/15 rounded-full blur-3xl pointer-events-none"></div>
       <div class="absolute -bottom-16 -left-16 w-56 h-56 bg-amber-400/15 rounded-full blur-3xl pointer-events-none"></div>
 
-      <!-- LOGO CÁ NHÂN TÁC GIẢ NỔI BẬT -->
-      <div class="relative inline-block mb-3 group">
-        <div class="absolute inset-0 bg-emerald-400 rounded-3xl blur-xl opacity-40 group-hover:opacity-60 transition duration-500 animate-pulse"></div>
-        <img src="logo.png" alt="Logo Cá Nhân Tác Giả" class="relative w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-3xl object-contain shadow-xl border-2 border-white/90 bg-white p-1.5 transition duration-300 hover:scale-105">
+      <!-- LOGO CÁ NHÂN TÁC GIẢ NỔI BẬT (KÍCH THƯỚC LỚN RÕ NÉT) -->
+      <div class="relative inline-block mb-4 group">
+        <div class="absolute inset-0 bg-emerald-400/30 rounded-3xl blur-2xl group-hover:opacity-80 transition duration-500 animate-pulse"></div>
+        <img src="logo.png" alt="Logo Cá Nhân" class="relative w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 mx-auto rounded-3xl object-contain shadow-2xl border-2 border-emerald-300/80 bg-white p-2.5 transition duration-300 hover:scale-105 ring-8 ring-emerald-50">
       </div>
 
       <!-- Badge Tác Giả & Khóa học -->
@@ -328,25 +328,24 @@
       <div class="flex items-center justify-between gap-3">
         
         <!-- LOGO CÁ NHÂN & THÔNG TIN HỌC SINH -->
-        <div class="flex items-center gap-3">
-          <!-- Logo cá nhân giáo viên -->
-          <div class="relative group cursor-pointer" onclick="switchTab('tab-intro')" title="Hệ thống học liệu số KHTN 9">
-            <img src="logo.png" alt="Logo Cá Nhân" class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl object-cover shadow-sm border-2 border-emerald-500 bg-white p-0.5 hover:scale-105 transition duration-200">
-            <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[8px] text-white font-black" title="Tác giả">✓</span>
+        <div class="flex items-center gap-3 min-w-0">
+          <!-- Logo cá nhân kích thước lớn, sắc nét, không vỡ layout -->
+          <div class="relative group cursor-pointer flex-shrink-0" onclick="switchTab('tab-intro')" title="Hệ thống học liệu số KHTN 9">
+            <img src="logo.png" alt="Logo Cá Nhân" class="w-14 h-14 sm:w-16 sm:h-16 md:w-[70px] md:h-[70px] rounded-2xl object-contain shadow-md border-2 border-emerald-500 bg-white p-1 hover:scale-105 transition duration-200">
+            <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[9px] text-white font-black shadow-xs" title="Tác giả">✓</span>
           </div>
 
-          <div>
+          <div class="min-w-0">
             <div class="flex items-center gap-2">
-              <span class="font-black text-slate-900 text-sm sm:text-base leading-tight tracking-tight">KHTN 9: BÀI 23 - ALKANE</span>
-              
+              <span class="font-black text-slate-900 text-sm sm:text-base md:text-lg leading-tight tracking-tight truncate">KHTN 9: BÀI 23 - ALKANE</span>
             </div>
-            <div class="text-[11px] font-semibold text-slate-500 flex items-center gap-2 mt-0.5">
+            <div class="text-[11px] sm:text-xs font-semibold text-slate-500 flex items-center gap-2 mt-0.5 flex-wrap">
               <span class="flex items-center gap-1 text-slate-800 font-bold">
                 <span id="header-avatar" class="text-xs">🧑‍🔬</span> 
-                <span id="header-student-name">Nguyễn Văn An</span>
+                <span id="header-student-name" class="truncate max-w-[120px] sm:max-w-none">Nguyễn Văn An</span>
               </span>
-              <span class="text-slate-300">•</span>
-              <span id="header-level-badge" class="text-teal-700 font-bold">Lv.1 Tập sự</span>
+              <span class="text-slate-300 hidden sm:inline">•</span>
+              <span id="header-level-badge" class="text-teal-700 font-bold hidden sm:inline">Lv.1 Tập sự</span>
               <span id="header-streak-badge" class="text-orange-600 font-extrabold hidden">🔥 Chuỗi x1</span>
             </div>
           </div>
@@ -1712,6 +1711,14 @@
 
         <!-- BẢN IN GIẤY CHỨNG NHẬN -->
         <div id="certificate-preview" class="border-8 border-double border-amber-600/40 rounded-3xl p-6 sm:p-8 bg-gradient-to-b from-amber-50/50 via-white to-amber-50/30 text-center relative max-w-2xl mx-auto shadow-2xl">
+          <!-- Header Giấy khen với Logo cá nhân lớn nổi bật -->
+          <div class="flex items-center justify-center gap-4 mb-3">
+            <img src="logo.png" alt="Logo" class="w-20 h-20 sm:w-24 sm:h-24 object-contain rounded-2xl shadow-md border-2 border-amber-300 bg-white p-1.5 flex-shrink-0">
+            <div class="text-left">
+              <div class="text-xs uppercase font-black tracking-widest text-amber-900 font-display">BỘ GIÁO DỤC VÀ ĐÀO TẠO • TRƯỜNG THCS</div>
+              <div class="text-[11px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">HỆ THỐNG KIỂM TRA & ĐÁNH GIÁ NĂNG LỰC SỐ</div>
+            </div>
+          </div>
           <div class="text-[10px] uppercase font-black tracking-widest text-amber-800 mb-1">
             BỘ GIÁO DỤC VÀ ĐÀO TẠO • TRƯỜNG THCS
           </div>
@@ -1785,7 +1792,7 @@
     <footer class="mt-12 py-8 border-t border-slate-200/80 bg-white/80 backdrop-blur-md">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-3">
-          <img src="logo.png" alt="Logo" class="w-10 h-10 rounded-2xl object-cover border border-slate-200 shadow-xs bg-white p-0.5">
+          <img src="logo.png" alt="Logo" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-contain border border-slate-200 shadow-sm bg-white p-1 flex-shrink-0">
           <div>
             <div class="font-black text-xs sm:text-sm text-slate-900 uppercase tracking-wider font-display">HỆ THỐNG BÀI GIẢNG SỐ • KHOA HỌC TỰ NHIÊN 9</div>
             <div class="text-[11px] text-slate-500 font-semibold">Bài 23: Alkane • Bộ sách Kết Nối Tri Thức Với Cuộc Sống</div>
