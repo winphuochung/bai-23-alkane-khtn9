@@ -1327,7 +1327,7 @@
 
     </section>
 
-    <!-- ========================================== -->
+        <!-- ========================================== -->
     <!-- 6. GAME CHALLENGE: ĐẤU TRƯỜNG ALKANE       -->
     <!-- ========================================== -->
     <section id="tab-challenge" class="tab-content hidden space-y-5">
@@ -1337,20 +1337,39 @@
         <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-5">
           <div>
             <div class="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-xs font-black uppercase mb-2">
-              🏆 ĐẤU TRƯỜNG QUIZ BATTLE
+              🏆 ĐẤU TRƯỜNG QUIZ 20 CÂU • THANG ĐIỂM 10
             </div>
             <h2 class="text-2xl sm:text-3xl font-black">CHINH PHỤC ĐỈNH CAO ALKANE</h2>
-            <p class="text-purple-100 text-xs sm:text-sm mt-1 max-w-lg">
-              Bộ 8 câu hỏi thử thách năng lực. Đạt từ 70 điểm để mở khóa <b>Huy Hiệu Đại Kiện Tướng</b>!
+            <p class="text-purple-100 text-xs sm:text-sm mt-1 max-w-xl">
+              20 câu hỏi sắp xếp từ <b>Dễ đến Khó</b> (Nhận biết ➔ Thông hiểu ➔ Vận dụng ➔ Vận dụng cao). Khi nộp bài sẽ tự động chấm điểm theo <b>Thang điểm 10</b>, hiển thị đáp án đúng kèm lời giải chi tiết và hỗ trợ <b>Lưu vào Google Drive</b>!
             </p>
           </div>
 
-          <!-- Score Box -->
-          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-center min-w-[150px]">
-            <div class="text-[10px] font-black uppercase tracking-wider text-purple-200">Điểm Đấu Trường</div>
-            <div id="quiz-score-display" class="text-3xl sm:text-4xl font-black text-amber-300 my-0.5">0 / 80</div>
-            <div id="quiz-question-counter" class="text-xs font-bold text-white/80">Câu 1 trên 8</div>
+          <!-- Score & Progress Box -->
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-center min-w-[170px] shadow-inner">
+            <div class="text-[10px] font-black uppercase tracking-wider text-purple-200">Tiến độ làm bài</div>
+            <div id="quiz-answered-count" class="text-2xl sm:text-3xl font-black text-amber-300 my-0.5">0 / 20 câu</div>
+            <div class="text-xs font-bold text-white/90">Thang điểm 10.0</div>
           </div>
+        </div>
+      </div>
+
+      <!-- BẢNG ĐIỀU HƯỚNG 20 CÂU HỎI (QUESTION PALETTE) -->
+      <div class="glass-card rounded-2xl p-4 bg-white border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+          <span class="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+            <span>🧭</span> Danh sách 20 câu hỏi (Bấm số để chuyển câu):
+          </span>
+          <span class="text-xs font-bold text-slate-600">
+            Đã làm: <b id="quiz-palette-progress" class="text-indigo-600">0/20</b> câu
+          </span>
+        </div>
+        <!-- 20 câu hỏi buttons -->
+        <div id="quiz-palette-grid" class="grid grid-cols-5 sm:grid-cols-10 md:grid-cols-20 gap-1.5 sm:gap-2"></div>
+        <div class="flex items-center gap-4 mt-3 text-[11px] text-slate-500 flex-wrap">
+          <span class="inline-flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-lg bg-slate-100 border border-slate-300"></span> Chưa chọn</span>
+          <span class="inline-flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-lg bg-indigo-600 text-white text-[9px] flex items-center justify-center font-bold">✓</span> Đã chọn</span>
+          <span class="inline-flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-lg border-2 border-amber-500 ring-2 ring-amber-200 bg-amber-50"></span> Đang làm</span>
         </div>
       </div>
 
@@ -1358,52 +1377,152 @@
       <div id="quiz-main-card" class="glass-card rounded-3xl p-6 sm:p-8 bg-white border border-slate-200 shadow-md">
         
         <div class="w-full bg-slate-100 rounded-full h-2.5 mb-5 overflow-hidden">
-          <div id="quiz-progress-fill" class="bg-gradient-to-r from-indigo-500 to-pink-500 h-full rounded-full transition-all duration-300 w-[12.5%]"></div>
+          <div id="quiz-progress-fill" class="bg-gradient-to-r from-indigo-500 to-pink-500 h-full rounded-full transition-all duration-300 w-[5%]"></div>
         </div>
 
         <div class="mb-5">
-          <div class="inline-block bg-indigo-100 text-indigo-800 text-xs font-black px-3 py-0.5 rounded-full uppercase mb-2" id="quiz-badge">
-            Câu hỏi 1
+          <div class="flex items-center justify-between flex-wrap gap-2 mb-2">
+            <div class="inline-flex items-center gap-2">
+              <span class="bg-indigo-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase shadow-xs" id="quiz-badge">
+                Câu 1 / 20
+              </span>
+              <span id="quiz-level-badge" class="text-xs font-bold px-3 py-1 rounded-full border">
+                Mức 1: Nhận biết
+              </span>
+            </div>
+            <span class="text-xs font-semibold text-slate-400">Chọn 1 đáp án đúng nhất</span>
           </div>
           <h3 id="quiz-question-title" class="text-base sm:text-lg font-black text-slate-800 leading-snug"></h3>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5" id="quiz-options-container"></div>
+        <!-- 4 Lựa chọn -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6" id="quiz-options-container"></div>
 
-        <div id="quiz-feedback-box" class="hidden p-4 rounded-2xl mb-4 text-xs sm:text-sm font-bold transition-all"></div>
+        <!-- Thanh điều hướng và nút nộp bài -->
+        <div class="flex items-center justify-between flex-wrap gap-3 pt-4 border-t border-slate-100">
+          <div class="flex items-center gap-2">
+            <button id="quiz-prev-btn" onclick="prevQuizQuestion()" class="px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 font-black text-slate-700 text-xs sm:text-sm transition active:scale-95 flex items-center gap-1.5 shadow-xs disabled:opacity-40 disabled:cursor-not-allowed">
+              <span>⬅</span> <span>Câu trước</span>
+            </button>
+            <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 font-black text-slate-700 text-xs sm:text-sm transition active:scale-95 flex items-center gap-1.5 shadow-xs disabled:opacity-40 disabled:cursor-not-allowed">
+              <span>Câu tiếp</span> <span>➔</span>
+            </button>
+          </div>
 
-        <div class="flex justify-end">
-          <button id="quiz-next-btn" onclick="nextQuizQuestion()" disabled class="px-6 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 active:scale-95 shadow-md text-xs sm:text-sm">
-            <span>Câu tiếp theo</span>
-            <span>➔</span>
-          </button>
+          <div class="flex items-center gap-2">
+            <button onclick="confirmSubmitQuiz()" class="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black text-xs sm:text-sm shadow-lg hover:shadow-xl transition active:scale-95 flex items-center gap-2">
+              <span>🏁</span>
+              <span>NỘP BÀI (Chấm Điểm Thang 10)</span>
+            </button>
+          </div>
         </div>
 
       </div>
 
-      <!-- KẾT QUẢ CUỐI QUIZ -->
-      <div id="quiz-results-card" class="hidden glass-card rounded-3xl p-6 sm:p-10 bg-white border-2 border-emerald-300 shadow-xl text-center space-y-5">
-        <div class="w-16 h-16 mx-auto rounded-full bg-amber-100 border-4 border-amber-300 flex items-center justify-center text-3xl shadow-inner">
-          🎉
+      <!-- KẾT QUẢ CUỐI QUIZ & LƯU GOOGLE DRIVE -->
+      <div id="quiz-results-card" class="hidden glass-card rounded-3xl p-6 sm:p-10 bg-white border-2 border-emerald-400 shadow-xl space-y-6">
+        
+        <!-- Header kết quả -->
+        <div class="text-center space-y-3 pb-4 border-b border-slate-100">
+          <div id="quiz-result-icon" class="w-20 h-20 mx-auto rounded-full bg-amber-100 border-4 border-amber-300 flex items-center justify-center text-4xl shadow-inner">
+            🏆
+          </div>
+          <div>
+            <h3 class="text-2xl sm:text-3xl font-black text-slate-800">
+              Kết Quả Bài Kiểm Tra: <span class="player-name-text text-emerald-700">Nguyễn Văn An</span>
+            </h3>
+            <p id="quiz-final-evaluation" class="text-slate-600 text-sm mt-1 font-semibold max-w-xl mx-auto"></p>
+          </div>
+
+          <!-- Bảng điểm thang 10 to rõ -->
+          <div class="flex items-center justify-center gap-4 flex-wrap pt-2">
+            <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white px-8 py-4 rounded-3xl shadow-lg text-center min-w-[200px]">
+              <div class="text-xs font-bold uppercase tracking-wider text-emerald-100">ĐIỂM SỐ (THANG 10)</div>
+              <div id="quiz-final-score-10" class="text-5xl font-black my-0.5 text-amber-300">10.0</div>
+              <div class="text-xs font-bold text-white/90">/ 10.0 Điểm</div>
+            </div>
+
+            <div class="bg-slate-50 border-2 border-slate-200 rounded-3xl px-6 py-4 text-center min-w-[180px]">
+              <div class="text-xs font-bold uppercase tracking-wider text-slate-500">Số câu trả lời đúng</div>
+              <div id="quiz-correct-ratio" class="text-3xl font-black my-0.5 text-indigo-700">20 / 20</div>
+              <div id="quiz-percentage" class="text-xs font-bold text-emerald-600">100% Chính xác</div>
+            </div>
+          </div>
         </div>
 
+        <!-- KHU VỰC LƯU GOOGLE DRIVE NỔI BẬT -->
+        <div class="bg-gradient-to-br from-blue-50 via-indigo-50 to-emerald-50 border-2 border-blue-200 rounded-3xl p-5 sm:p-6 shadow-sm">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-12 h-12 rounded-2xl bg-white shadow-md flex items-center justify-center text-2xl border border-slate-200 flex-shrink-0">
+              📁
+            </div>
+            <div>
+              <h4 class="text-base sm:text-lg font-black text-slate-800 flex items-center gap-2">
+                Lưu Kết Quả Vào Google Drive
+                <span class="text-[10px] bg-blue-600 text-white font-black px-2 py-0.5 rounded-full uppercase tracking-wider">Google Drive Ready</span>
+              </h4>
+              <p class="text-xs text-slate-600 font-semibold">
+                Tải phiếu điểm & lời giải chi tiết, sau đó tải lên Google Drive của bạn hoặc gửi trực tiếp cho Giáo viên bộ môn.
+              </p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            <!-- Nút 1: Tải file & mở Google Drive -->
+            <button onclick="saveAndOpenGoogleDrive()" class="px-4 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs sm:text-sm shadow-md hover:shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
+              <span>🚀</span>
+              <span>Tải File & Mở Google Drive</span>
+            </button>
+
+            <!-- Nút 2: In / Lưu PDF vào Google Drive -->
+            <button onclick="printQuizResult()" class="px-4 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md hover:shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
+              <span>🖨️</span>
+              <span>In / Xuất PDF (Save to Drive)</span>
+            </button>
+
+            <!-- Nút 3: Sao chép kết quả gửi Zalo/Classroom -->
+            <button onclick="copyQuizResult()" id="btn-copy-result" class="px-4 py-3 rounded-2xl bg-white border-2 border-slate-300 hover:bg-slate-50 text-slate-700 font-black text-xs sm:text-sm shadow-sm transition active:scale-95 flex items-center justify-center gap-2">
+              <span>📋</span>
+              <span>Sao chép kết quả tóm tắt</span>
+            </button>
+          </div>
+
+          <!-- Hướng dẫn thân thiện -->
+          <div class="mt-3 bg-white/80 rounded-xl p-3 text-[11px] text-slate-600 flex items-start gap-2 border border-slate-200">
+            <span>💡</span>
+            <span><b>Mẹo cho học sinh:</b> Khi bấm <i>"Tải File & Mở Google Drive"</i>, trình duyệt sẽ tải về file HTML tự chạy chứa đầy đủ tên, điểm thang 10, đáp án và lời giải chi tiết. Đồng thời Google Drive sẽ mở ở tab mới, em chỉ việc kéo thả file vào thư mục học tập trên Drive!</span>
+          </div>
+        </div>
+
+        <!-- DANH SÁCH CHI TIẾT 20 CÂU HỎI KÈM ĐÁP ÁN VÀ GIẢI THÍCH -->
         <div>
-          <h3 class="text-2xl font-black text-slate-800">Tuyệt Vời, <span class="player-name-text text-emerald-700">Nguyễn Văn An</span>!</h3>
-          <p id="quiz-final-evaluation" class="text-slate-600 text-sm mt-1 font-semibold"></p>
+          <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+            <div>
+              <h4 class="text-base sm:text-lg font-black text-slate-800 flex items-center gap-2">
+                <span>📝</span> BẢNG ĐÁP ÁN & GIẢI THÍCH CHI TIẾT 20 CÂU HỎI
+              </h4>
+              <p class="text-xs text-slate-500 font-semibold">Xem đáp án em đã chọn so với đáp án đúng và lời giải chuẩn SGK KHTN 9</p>
+            </div>
+
+            <!-- Bộ lọc câu -->
+            <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-bold">
+              <button onclick="filterReview('all')" id="filter-review-all" class="review-filter-btn px-3 py-1 rounded-lg bg-white shadow-xs text-indigo-700 font-black">Tất cả (20)</button>
+              <button onclick="filterReview('correct')" id="filter-review-correct" class="review-filter-btn px-3 py-1 rounded-lg text-slate-600 hover:bg-white/60">✅ Câu đúng</button>
+              <button onclick="filterReview('wrong')" id="filter-review-wrong" class="review-filter-btn px-3 py-1 rounded-lg text-slate-600 hover:bg-white/60">❌ Câu sai</button>
+            </div>
+          </div>
+
+          <!-- Container danh sách 20 câu giải thích -->
+          <div id="quiz-review-list" class="space-y-4 max-h-[600px] overflow-y-auto pr-1"></div>
         </div>
 
-        <div class="inline-block bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-7 py-3 rounded-2xl shadow-lg">
-          <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-100">Điểm Đấu Trường Đạt Được</div>
-          <div id="quiz-final-score-text" class="text-4xl font-black my-0.5">80 / 80</div>
-        </div>
-
-        <div class="flex items-center justify-center gap-3 flex-wrap pt-2">
-          <!-- NÚT CHƠI LẠI TRONG BẢNG KẾT QUẢ -->
-          <button onclick="restartQuiz()" class="px-5 py-2.5 rounded-xl border-2 border-slate-300 hover:bg-slate-50 font-black text-slate-700 text-xs transition active:scale-95 flex items-center gap-1.5">
-            <span>🔄</span> <span>Chơi Lại Đấu Trường</span>
+        <!-- Các nút thao tác cuối cùng -->
+        <div class="flex items-center justify-center gap-3 flex-wrap pt-4 border-t border-slate-100">
+          <button onclick="restartQuiz()" class="px-6 py-2.5 rounded-2xl border-2 border-slate-300 hover:bg-slate-50 font-black text-slate-700 text-xs sm:text-sm transition active:scale-95 flex items-center gap-2">
+            <span>🔄</span> <span>Làm Lại Bài Thi</span>
           </button>
-          <button onclick="switchTab('tab-summary')" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs hover:shadow-lg transition active:scale-95 shadow-md flex items-center gap-1.5">
-            <span>📜</span> <span>Nhận Bằng Khen & Xem Tổng Kết</span>
+          <button onclick="switchTab('tab-summary')" class="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs sm:text-sm hover:shadow-lg transition active:scale-95 shadow-md flex items-center gap-2">
+            <span>📜</span> <span>Xem Bằng Khen & Giấy Chứng Nhận</span>
           </button>
         </div>
 
@@ -1596,7 +1715,7 @@
         b2: { id: 'b2', name: 'Thợ Săn Hydrocarbon', icon: '🥈', desc: 'Phân loại chính xác 8 hợp chất hữu cơ', unlocked: false, reward: 20 },
         b3: { id: 'b3', name: 'Bậc Thầy Phân Tử', icon: '🧬', desc: 'Ghép cặp hoàn hảo 4 Alkane C1–C4', unlocked: false, reward: 20 },
         b4: { id: 'b4', name: 'Phù Thủy Ngọn Lửa', icon: '🔥', desc: 'Hoàn thành thí nghiệm ảo & cân bằng PTHH', unlocked: false, reward: 30 },
-        b5: { id: 'b5', name: 'Đại Kiện Tướng Alkane', icon: '👑', desc: 'Đạt từ 70/80 điểm Đấu Trường Quiz', unlocked: false, reward: 50 }
+        b5: { id: 'b5', name: 'Đại Kiện Tướng Alkane', icon: '👑', desc: 'Đạt từ 8.0/10.0 điểm Đấu Trường Quiz 20 câu', unlocked: false, reward: 50 }
       },
       completedTasks: {
         warmup: false,
@@ -2579,45 +2698,67 @@
       }
     }
 
-    /* ========================================================
-       15. ĐẤU TRƯỜNG QUIZ (GAME CHALLENGE)
+        /* ========================================================
+       15. ĐẤU TRƯỜNG QUIZ (GAME CHALLENGE - 20 CÂU THANG ĐIỂM 10)
        ======================================================== */
     const quizQuestions = [
+      // --- MỨC 1: NHẬN BIẾT (CÂU 1 - 5) ---
       {
-        title: 'Khái niệm nào sau đây đúng về Hydrocarbon?',
+        level: 'Mức 1: Nhận biết',
+        levelColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+        title: 'Câu 1: Hợp chất hữu cơ nào sau đây thuộc loại hydrocarbon?',
         options: [
-          'Hợp chất chứa Carbon, Hydrogen và Oxygen',
-          'Hợp chất hữu cơ mà phân tử chỉ chứa nguyên tố Carbon và Hydrogen',
-          'Tất cả các chất vô cơ có chứa nguyên tố Carbon',
-          'Hợp chất chứa liên kết kim loại'
+          'CH₄ (Methane)',
+          'C₂H₅OH (Ethanol)',
+          'CH₃COOH (Acetic acid)',
+          'CH₃Cl (Chloromethane)'
         ],
-        answer: 1,
-        explain: 'Hydrocarbon là hợp chất hữu cơ mà phân tử CHỈ CHỨA 2 nguyên tố carbon (C) và hydrogen (H).'
+        answer: 0,
+        explain: 'Hydrocarbon là hợp chất hữu cơ mà trong thành phần phân tử CHỈ CHỨA hai nguyên tố carbon (C) và hydrogen (H). Các chất còn lại chứa Oxi hoặc Clo nên là dẫn xuất của hydrocarbon. (SGK KHTN 9 Trang 103)'
       },
       {
-        title: 'Đặc điểm cấu tạo quan trọng nhất của phân tử Alkane là gì?',
+        level: 'Mức 1: Nhận biết',
+        levelColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+        title: 'Câu 2: Alkane là những hydrocarbon có đặc điểm cấu tạo nào sau đây?',
         options: [
-          'Có mạch vòng kín và có liên kết ba',
           'Mạch hở, phân tử chỉ chứa các liên kết đơn',
-          'Bắt buộc phải có chứa ít nhất một liên kết đôi C=C',
-          'Chứa nhóm chức -OH'
+          'Mạch vòng, phân tử chứa một liên kết đôi C=C',
+          'Mạch hở, phân tử chứa một liên kết ba',
+          'Mạch hở, phân tử chứa ít nhất một liên kết đôi C=C'
         ],
-        answer: 1,
-        explain: 'Alkane là những hydrocarbon mạch hở, trong phân tử chỉ chứa các LIÊN KẾT ĐƠN.'
+        answer: 0,
+        explain: 'Theo định nghĩa SGK Trang 103: "Alkane là những hydrocarbon mạch hở, phân tử chỉ chứa các liên kết đơn."'
       },
       {
-        title: 'Công thức phân tử chung của dãy đồng đẳng Alkane là gì?',
+        level: 'Mức 1: Nhận biết',
+        levelColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+        title: 'Câu 3: Dãy đồng đẳng alkane có công thức phân tử chung là:',
         options: [
           'CnH2n (n ≥ 2)',
           'CnH2n-2 (n ≥ 2)',
-          'CnH2n+2 (n ≥ 1, n nguyên dương)',
+          'CnH2n+2 (n ≥ 1, n là số nguyên dương)',
           'CnH2n+1OH (n ≥ 1)'
         ],
         answer: 2,
-        explain: 'Alkane có công thức phân tử chung là CnH2n+2 (n ≥ 1, n là số nguyên dương).'
+        explain: 'Alkane có công thức phân tử chung là CnH2n+2 với n ≥ 1, n là số nguyên dương. (SGK Trang 104)'
       },
       {
-        title: 'Alkane có công thức phân tử C₃H₈ có tên gọi quốc tế là gì?',
+        level: 'Mức 1: Nhận biết',
+        levelColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+        title: 'Câu 4: Alkane đơn giản nhất có công thức phân tử CH₄ có tên gọi là:',
+        options: [
+          'Ethane',
+          'Methane',
+          'Propane',
+          'Butane'
+        ],
+        answer: 1,
+        explain: 'CH₄ có 1 nguyên tử carbon, tên gọi quốc tế là Methane. Có nhiều trong khí bùn ao, khí mỏ dầu và khí sinh học biogas. (Bảng 23.1 SGK Trang 104)'
+      },
+      {
+        level: 'Mức 1: Nhận biết',
+        levelColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+        title: 'Câu 5: Alkane chứa 3 nguyên tử carbon trong phân tử (C₃H₈) có tên gọi là:',
         options: [
           'Methane',
           'Ethane',
@@ -2625,32 +2766,120 @@
           'Butane'
         ],
         answer: 2,
-        explain: '3 Carbon tương ứng tiền tố Prop- + đuôi -ane ➔ Propane (C₃H₈).'
+        explain: 'Tiền tố "prop-" chỉ 3 carbon + hậu tố "-ane" ➔ Propane (C₃H₈). (Bảng 23.1 SGK Trang 104)'
       },
+
+      // --- MỨC 2: THÔNG HIỂU (CÂU 6 - 10) ---
       {
-        title: 'Chất nào sau đây KHÔNG thuộc loại alkane?',
+        level: 'Mức 2: Thông hiểu',
+        levelColor: 'bg-blue-100 text-blue-800 border-blue-300',
+        title: 'Câu 6: Khí dầu mỏ hoá lỏng (LPG) thường dùng làm nhiên liệu đun nấu trong gia đình có thành phần chính là:',
         options: [
-          'CH₄ (Methane)',
-          'CH₃—CH₃ (Ethane)',
-          'CH₂=CH—CH₃ (Propene)',
-          'CH₃—CH₂—CH₃ (Propane)'
-        ],
-        answer: 2,
-        explain: 'CH₂=CH—CH₃ có chứa liên kết đôi C=C nên là alkene, không phải alkane.'
-      },
-      {
-        title: 'Trong thí nghiệm đốt cháy Butane, dẫn sản phẩm qua nước vôi trong Ca(OH)₂ thấy bị vẩn đục là do:',
-        options: [
-          'Tạo thành khí Oxygen (O₂)',
-          'Khí Carbon dioxide (CO₂) phản ứng tạo kết tủa trắng CaCO₃',
-          'Hơi nước ngưng tụ làm đục nước vôi',
-          'Khí butane không cháy bị hoà tan'
+          'Methane và Ethane',
+          'Propane và Butane',
+          'Hexane và Heptane',
+          'Carbon monoxide và Hydrogen'
         ],
         answer: 1,
-        explain: 'CO₂ sinh ra tác dụng với Ca(OH)₂ tạo kết tủa trắng CaCO₃: CO₂ + Ca(OH)₂ ⟶ CaCO₃↓ + H₂O.'
+        explain: 'Khí dầu mỏ hoá lỏng (LPG - Liquefied Petroleum Gas) dùng cho bếp gas gia đình và bật lửa có thành phần chính gồm propane (C₃H₈) và butane (C₄H₁₀). (SGK Trang 105)'
       },
       {
-        title: 'Theo số liệu SGK, khi đốt cháy hoàn toàn 1 GAM chất nào sau đây toả ra NHIỀU NHIỆT LƯỢNG NHẤT?',
+        level: 'Mức 2: Thông hiểu',
+        levelColor: 'bg-blue-100 text-blue-800 border-blue-300',
+        title: 'Câu 7: Chất nào sau đây KHÔNG thuộc dãy đồng đẳng alkane?',
+        options: [
+          'CH₄',
+          'C₂H₆',
+          'C₂H₄',
+          'C₃H₈'
+        ],
+        answer: 2,
+        explain: 'C₂H₄ (ethylene) không phù hợp công thức CnH2n+2 (với n=2 thì 2n+2=6, không phải 4) và trong phân tử có chứa liên kết đôi C=C, do đó C₂H₄ là alkene chứ không phải alkane. (SGK Trang 104)'
+      },
+      {
+        level: 'Mức 2: Thông hiểu',
+        levelColor: 'bg-blue-100 text-blue-800 border-blue-300',
+        title: 'Câu 8: Trong dãy đồng đẳng alkane, phân tử của mỗi chất liên tiếp hơn kém nhau nhóm nguyên tử nào?',
+        options: [
+          'Một nhóm —CH₂—',
+          'Một nhóm —CH₃',
+          'Hai nhóm —CH₂—',
+          'Một nguyên tử Carbon'
+        ],
+        answer: 0,
+        explain: 'Trong dãy đồng đẳng alkane, mỗi chất liên tiếp hơn kém nhau một nhóm methylene (—CH₂—), tức hơn 1 nguyên tử C và 2 nguyên tử H. (SGK Trang 104)'
+      },
+      {
+        level: 'Mức 2: Thông hiểu',
+        levelColor: 'bg-blue-100 text-blue-800 border-blue-300',
+        title: 'Câu 9: Trong thí nghiệm đốt butane bằng bật lửa gas, vì sao thành trong của bình tam giác úp ngược bị mờ đi?',
+        options: [
+          'Do khói muội than bám vào',
+          'Do hơi nước (H₂O) sinh ra ngưng tụ thành những giọt nước li ti',
+          'Do khí butane bay hơi làm đục thuỷ tinh',
+          'Do khí CO₂ làm đục mặt kính'
+        ],
+        answer: 1,
+        explain: 'Phản ứng cháy của butane tạo ra hơi nước (H₂O). Khi gặp thành bình tam giác lạnh hơn, hơi nước ngưng tụ thành các giọt nước li ti bám trên thành bình làm mờ bình. (SGK Trang 104)'
+      },
+      {
+        level: 'Mức 2: Thông hiểu',
+        levelColor: 'bg-blue-100 text-blue-800 border-blue-300',
+        title: 'Câu 10: Khi rót nước vôi trong Ca(OH)₂ vào bình tam giác sau phản ứng cháy của butane rồi lắc đều, nước vôi trong bị vẩn đục là do:',
+        options: [
+          'Khí O₂ dư phản ứng với nước vôi',
+          'Khí CO₂ sinh ra phản ứng với Ca(OH)₂ tạo kết tủa trắng CaCO₃',
+          'Nước sinh ra hòa tan canxi',
+          'Khí butane chưa cháy hết kết tủa lại'
+        ],
+        answer: 1,
+        explain: 'Khí carbon dioxide (CO₂) sinh ra từ phản ứng cháy tác dụng với nước vôi trong Ca(OH)₂ tạo ra canxi cacbonat (CaCO₃) kết tủa trắng không tan, làm nước vôi bị vẩn đục: CO₂ + Ca(OH)₂ ⟶ CaCO₃↓ + H₂O. (SGK Trang 104)'
+      },
+
+      // --- MỨC 3: VẬN DỤNG (CÂU 11 - 15) ---
+      {
+        level: 'Mức 3: Vận dụng',
+        levelColor: 'bg-amber-100 text-amber-800 border-amber-300',
+        title: 'Câu 11: Một phân tử alkane chứa 4 nguyên tử carbon trong phân tử thì có công thức phân tử là:',
+        options: [
+          'C₄H₈',
+          'C₄H₁₀',
+          'C₄H₆',
+          'C₄H₁₂'
+        ],
+        answer: 1,
+        explain: 'Áp dụng công thức phân tử chung CnH2n+2 với n = 4: số H = 2×4 + 2 = 10 ➔ Công thức là C₄H₁₀ (Butane). (SGK Trang 104)'
+      },
+      {
+        level: 'Mức 3: Vận dụng',
+        levelColor: 'bg-amber-100 text-amber-800 border-amber-300',
+        title: 'Câu 12: Một alkane X có khối lượng mol phân tử là 30 g/mol. Tên gọi của X là:',
+        options: [
+          'Methane',
+          'Ethane',
+          'Propane',
+          'Butane'
+        ],
+        answer: 1,
+        explain: 'Công thức chung của alkane là CnH2n+2. Khối lượng mol: M = 12n + (2n + 2) = 14n + 2 = 30 ➔ 14n = 28 ➔ n = 2. C₂H₆ chính là Ethane. (SGK Trang 104)'
+      },
+      {
+        level: 'Mức 3: Vận dụng',
+        levelColor: 'bg-amber-100 text-amber-800 border-amber-300',
+        title: 'Câu 13: Khi cân bằng phương trình phản ứng đốt cháy hoàn toàn butane: a C₄H₁₀ + b O₂ ⟶ c CO₂ + d H₂O (tỉ lệ số nguyên tối giản), tổng các hệ số cân bằng (a + b + c + d) là:',
+        options: [
+          '29',
+          '31',
+          '33',
+          '35'
+        ],
+        answer: 2,
+        explain: 'Phương trình hóa học: 2 C₄H₁₀ + 13 O₂ ⟶ 8 CO₂ + 10 H₂O. Tổng các hệ số cân bằng tối giản là: 2 + 13 + 8 + 10 = 33. (SGK Trang 104)'
+      },
+      {
+        level: 'Mức 3: Vận dụng',
+        levelColor: 'bg-amber-100 text-amber-800 border-amber-300',
+        title: 'Câu 14: Dựa vào số liệu năng lượng trong SGK, khi đốt cháy hoàn toàn 1 GAM chất nào sau đây toả ra lượng nhiệt lớn nhất?',
         options: [
           'Methane (CH₄)',
           'Ethane (C₂H₆)',
@@ -2658,136 +2887,573 @@
           'Butane (C₄H₁₀)'
         ],
         answer: 0,
-        explain: 'Đốt 1g Methane toả ra ~55.69 kJ/g, cao nhất so với Ethane (52.03), Propane (50.45) và Butane (49.62 kJ/g).'
+        explain: 'Theo bảng nhiệt tỏa ra khi đốt cháy 1g alkane trong SGK Trang 105: Methane = 55.69 kJ/g; Ethane = 52.03 kJ/g; Propane = 50.45 kJ/g; Butane = 49.62 kJ/g. Do đó Methane tỏa ra nhiệt lượng lớn nhất trên mỗi gam.'
       },
       {
-        title: 'Khí gas đun nấu trong bình gia đình (LPG) có thành phần chính là các alkane nào?',
+        level: 'Mức 3: Vận dụng',
+        levelColor: 'bg-amber-100 text-amber-800 border-amber-300',
+        title: 'Câu 15: Nến (sáp paraffin) được sử dụng để thắp sáng có thành phần chính là các alkane ở trạng thái nào và có đặc điểm số nguyên tử C ra sao?',
         options: [
-          'Chỉ có methane nguyên chất',
-          'Hỗn hợp Propane và Butane hoá lỏng',
-          'Xăng thơm và dầu diesel',
-          'Paraffin rắn đun chảy'
+          'Khí (C1 đến C4)',
+          'Lỏng (C5 đến C17)',
+          'Rắn (chứa từ 18 nguyên tử C trở lên trong phân tử)',
+          'Chỉ gồm một chất tinh khiết C10H22'
+        ],
+        answer: 2,
+        explain: 'Ở điều kiện thường: C1 đến C4 là chất khí, C5 đến C17 là chất lỏng, từ C18 trở lên là chất rắn (như paraffin dùng làm nến, sáp bôi trơn). (SGK Trang 105)'
+      },
+
+      // --- MỨC 4: VẬN DỤNG CAO (CÂU 16 - 20) ---
+      {
+        level: 'Mức 4: Vận dụng cao',
+        levelColor: 'bg-rose-100 text-rose-800 border-rose-300',
+        title: 'Câu 16: Đốt cháy hoàn toàn 1 mol alkane X thu được 3 mol khí CO₂ và 4 mol hơi nước H₂O. Công thức phân tử của X là:',
+        options: [
+          'CH₄',
+          'C₂H₆',
+          'C₃H₈',
+          'C₄H₁₀'
+        ],
+        answer: 2,
+        explain: 'Số nguyên tử C = nCO₂ / nX = 3 / 1 = 3. Số nguyên tử H = (2 × nH₂O) / nX = (2 × 4) / 1 = 8. Vậy công thức phân tử của X là C₃H₈ (Propane).'
+      },
+      {
+        level: 'Mức 4: Vận dụng cao',
+        levelColor: 'bg-rose-100 text-rose-800 border-rose-300',
+        title: 'Câu 17: Khi đốt cháy hoàn toàn bất kỳ một alkane nào trong không khí, nhận xét nào sau đây về số mol H₂O và CO₂ là luôn đúng?',
+        options: [
+          'Số mol H₂O luôn nhỏ hơn số mol CO₂',
+          'Số mol H₂O luôn bằng số mol CO₂',
+          'Số mol H₂O luôn lớn hơn số mol CO₂',
+          'Không có mối quan hệ cố định'
+        ],
+        answer: 2,
+        explain: 'PTHH tổng quát: CnH2n+2 + (3n+1)/2 O₂ ⟶ n CO₂ + (n+1) H₂O. Vì n + 1 > n với mọi n ≥ 1, nên khi đốt cháy hoàn toàn alkane thì luôn có nH₂O > nCO₂.'
+      },
+      {
+        level: 'Mức 4: Vận dụng cao',
+        levelColor: 'bg-rose-100 text-rose-800 border-rose-300',
+        title: 'Câu 18: Vì sao khi đun nấu bếp gas hoặc chạy xe máy trong phòng kín, thiếu không khí lại có nguy cơ gây ngộ độc và tử vong?',
+        options: [
+          'Do sinh ra lượng lớn hơi nước làm ngập phòng',
+          'Do thiếu O₂, alkane cháy không hoàn toàn sinh ra khí carbon monoxide (CO) cực độc',
+          'Do alkane bốc hơi làm đóng băng đường hô hấp',
+          'Do tạo ra kết tủa canxi làm nghẽn phổi'
         ],
         answer: 1,
-        explain: 'Khí mỏ dầu hoá lỏng (LPG) dùng cho bật lửa gas và bếp gas gia đình có thành phần chính là propane và butane.'
+        explain: 'Khi thiếu oxygen, phản ứng cháy không hoàn toàn sinh ra muội than (C) và khí độc CO. Khí CO không màu, không mùi, kết hợp rất chặt với hemoglobin trong máu làm mất khả năng vận chuyển oxy nuôi cơ thể, dẫn tới ngạt thở và tử vong. (SGK Trang 104)'
+      },
+      {
+        level: 'Mức 4: Vận dụng cao',
+        levelColor: 'bg-rose-100 text-rose-800 border-rose-300',
+        title: 'Câu 19: Để sử dụng bếp gas gia đình an toàn và phòng chống cháy nổ, hành động nào sau đây là KHÔNG ĐƯỢC PHÉP làm?',
+        options: [
+          'Khóa van bình gas sau khi đun nấu xong rồi mới tắt bếp',
+          'Thường xuyên kiểm tra ống dẫn gas bằng bọt xà phòng',
+          'Khi ngửi thấy mùi gas rò rỉ, lập tức bật công tắc đèn hoặc quạt điện để thông gió',
+          'Đặt bình gas thẳng đứng ở nơi thông thoáng, cách xa nguồn nhiệt'
+        ],
+        answer: 2,
+        explain: 'Khi ngửi thấy mùi gas rò rỉ, TUYỆT ĐỐI KHÔNG bật hoặc tắt các công tắc điện, quạt điện hay quẹt lửa, vì tia lửa điện nhỏ phát ra từ công tắc có thể kích nổ toàn bộ hỗn hợp khí gas trong phòng! Phải mở toang các cửa sổ, khóa van bình gas và sơ tán. (SGK Trang 105)'
+      },
+      {
+        level: 'Mức 4: Vận dụng cao',
+        levelColor: 'bg-rose-100 text-rose-800 border-rose-300',
+        title: 'Câu 20: Đốt cháy hoàn toàn 0.1 mol khí propane (C₃H₈). Số mol khí oxygen (O₂) cần dùng vừa đủ là:',
+        options: [
+          '0.3 mol',
+          '0.4 mol',
+          '0.5 mol',
+          '0.6 mol'
+        ],
+        answer: 2,
+        explain: 'PTHH: C₃H₈ + 5O₂ ⟶ 3CO₂ + 4H₂O (t°). Theo tỉ lệ phương trình: nO₂ = 5 × nC₃H₈ = 5 × 0.1 = 0.5 mol.'
       }
     ];
 
     let currentQuizIndex = 0;
-    let quizScore = 0;
-    let quizAnswered = false;
+    let userAnswers = new Array(quizQuestions.length).fill(null);
+    let isQuizSubmitted = false;
+    let quizScore10 = 0;
+    let correctCount = 0;
+    let currentReviewFilter = 'all';
 
-    function renderQuizQuestion() {
-      quizAnswered = false;
-      const q = quizQuestions[currentQuizIndex];
-      document.getElementById('quiz-badge').textContent = `Câu hỏi ${currentQuizIndex + 1} / ${quizQuestions.length}`;
-      document.getElementById('quiz-question-counter').textContent = `Câu ${currentQuizIndex + 1} trên ${quizQuestions.length}`;
-      document.getElementById('quiz-question-title').textContent = q.title;
+    function initQuiz() {
+      currentQuizIndex = 0;
+      userAnswers = new Array(quizQuestions.length).fill(null);
+      isQuizSubmitted = false;
+      quizScore10 = 0;
+      correctCount = 0;
+      currentReviewFilter = 'all';
+      renderQuizPalette();
+      initQuiz();
+      updateQuizProgressInfo();
+    }
 
-      const pct = ((currentQuizIndex + 1) / quizQuestions.length) * 100;
-      document.getElementById('quiz-progress-fill').style.width = pct + '%';
+    function renderQuizPalette() {
+      const grid = document.getElementById('quiz-palette-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
 
-      const fbBox = document.getElementById('quiz-feedback-box');
-      fbBox.classList.add('hidden');
-      const nextBtn = document.getElementById('quiz-next-btn');
-      nextBtn.disabled = true;
-
-      const container = document.getElementById('quiz-options-container');
-      container.innerHTML = '';
-
-      q.options.forEach((optText, optIdx) => {
+      quizQuestions.forEach((q, idx) => {
         const btn = document.createElement('button');
-        btn.className = 'quiz-opt-btn p-3.5 rounded-2xl border-2 border-slate-200 bg-slate-50 hover:border-indigo-400 hover:bg-indigo-50/50 font-bold text-slate-800 text-xs sm:text-sm text-left transition flex items-center gap-2.5 active:scale-98';
-        btn.innerHTML = `
-          <span class="w-6 h-6 rounded-full bg-white border border-slate-300 flex items-center justify-center text-xs font-black text-slate-600 flex-shrink-0">
-            ${String.fromCharCode(65 + optIdx)}
-          </span>
-          <span class="flex-1">${optText}</span>
-        `;
-        btn.onclick = () => selectQuizAnswer(optIdx, btn);
-        container.appendChild(btn);
+        const isCurrent = (idx === currentQuizIndex);
+        const hasAnswered = (userAnswers[idx] !== null);
+
+        let cls = 'w-full py-1.5 sm:py-2 rounded-xl text-xs font-black transition active:scale-95 flex items-center justify-center relative ';
+        if (isCurrent) {
+          cls += 'ring-2 ring-amber-400 border-2 border-amber-500 bg-amber-50 text-amber-900 shadow-sm';
+        } else if (hasAnswered) {
+          cls += 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-xs';
+        } else {
+          cls += 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200';
+        }
+
+        btn.className = cls;
+        btn.innerHTML = `<span>${idx + 1}</span>${hasAnswered ? '<span class="absolute top-0.5 right-1 text-[8px] opacity-80">✓</span>' : ''}`;
+        btn.onclick = () => goToQuizQuestion(idx);
+        grid.appendChild(btn);
       });
     }
 
-    function selectQuizAnswer(chosenIdx, btnEl) {
-      if (quizAnswered) return;
-      quizAnswered = true;
+    function goToQuizQuestion(idx) {
+      if (idx < 0 || idx >= quizQuestions.length) return;
+      currentQuizIndex = idx;
+      renderQuizQuestion();
+      renderQuizPalette();
+    }
 
-      const q = quizQuestions[currentQuizIndex];
-      const buttons = document.querySelectorAll('.quiz-opt-btn');
-      const fbBox = document.getElementById('quiz-feedback-box');
-      const nextBtn = document.getElementById('quiz-next-btn');
-
-      buttons.forEach((btn, idx) => {
-        btn.classList.add('pointer-events-none');
-        if (idx === q.answer) {
-          btn.classList.remove('border-slate-200', 'bg-slate-50');
-          btn.classList.add('border-emerald-500', 'bg-emerald-100', 'text-emerald-950', 'glow-correct');
-        } else if (idx === chosenIdx && chosenIdx !== q.answer) {
-          btn.classList.remove('border-slate-200', 'bg-slate-50');
-          btn.classList.add('border-rose-500', 'bg-rose-100', 'text-rose-950', 'shake');
-        }
-      });
-
-      fbBox.classList.remove('hidden');
-      if (chosenIdx === q.answer) {
-        quizScore += 10;
-        document.getElementById('quiz-score-display').textContent = `${quizScore} / 80`;
-        fbBox.className = 'p-3.5 rounded-2xl mb-4 text-xs sm:text-sm font-semibold bg-emerald-100 border border-emerald-300 text-emerald-950';
-        fbBox.innerHTML = `🎉 <b>Chính xác tuyệt vời!</b> ${q.explain}`;
-        playSound('correct');
-        updateStreak(true);
-        addPoints(10, btnEl);
-      } else {
-        fbBox.className = 'p-3.5 rounded-2xl mb-4 text-xs sm:text-sm font-semibold bg-rose-100 border border-rose-300 text-rose-950';
-        fbBox.innerHTML = `💡 <b>Chưa chính xác:</b> ${q.explain}`;
-        playSound('wrong');
-        updateStreak(false);
-      }
-
-      nextBtn.disabled = false;
-      if (currentQuizIndex === quizQuestions.length - 1) {
-        nextBtn.innerHTML = `<span>Xem Tổng Kết Điểm</span> <span>🏆</span>`;
+    function prevQuizQuestion() {
+      if (currentQuizIndex > 0) {
+        goToQuizQuestion(currentQuizIndex - 1);
       }
     }
 
     function nextQuizQuestion() {
       if (currentQuizIndex < quizQuestions.length - 1) {
-        currentQuizIndex++;
-        renderQuizQuestion();
-      } else {
-        document.getElementById('quiz-main-card').classList.add('hidden');
-        const resultsCard = document.getElementById('quiz-results-card');
-        resultsCard.classList.remove('hidden');
-        document.getElementById('quiz-final-score-text').textContent = `${quizScore} / 80`;
-        const evalBox = document.getElementById('quiz-final-evaluation');
-
-        if (quizScore >= 70) {
-          evalBox.textContent = 'Phong độ phi thường! Em chính là một Đại Kiện Tướng Alkane xuất sắc nhất!';
-          playSound('fanfare');
-          triggerConfetti(3000);
-          unlockBadge('b5'); // Huy hiệu 5
-        } else if (quizScore >= 50) {
-          evalBox.textContent = 'Kết quả rất tốt! Em đã nắm được hầu hết kiến thức cốt lõi về Alkane!';
-          playSound('correct');
-        } else {
-          evalBox.textContent = 'Em đã rất cố gắng! Hãy xem lại phần Thí nghiệm ảo và Cấu tạo rồi bấm "Chơi lại" nhé!';
-          playSound('wrong');
-        }
-
-        gameState.completedTasks.quiz = true;
-        updateGlobalProgress();
+        goToQuizQuestion(currentQuizIndex + 1);
       }
     }
 
+    function renderQuizQuestion() {
+      const q = quizQuestions[currentQuizIndex];
+      if (!q) return;
+
+      document.getElementById('quiz-badge').textContent = `Câu ${currentQuizIndex + 1} / ${quizQuestions.length}`;
+      const levelBadge = document.getElementById('quiz-level-badge');
+      levelBadge.textContent = q.level;
+      levelBadge.className = `text-xs font-bold px-3 py-1 rounded-full border ${q.levelColor}`;
+
+      document.getElementById('quiz-question-title').textContent = q.title;
+
+      const pct = ((currentQuizIndex + 1) / quizQuestions.length) * 100;
+      document.getElementById('quiz-progress-fill').style.width = pct + '%';
+
+      // Update Prev / Next buttons state
+      const prevBtn = document.getElementById('quiz-prev-btn');
+      const nextBtn = document.getElementById('quiz-next-btn');
+      if (prevBtn) prevBtn.disabled = (currentQuizIndex === 0);
+      if (nextBtn) nextBtn.disabled = (currentQuizIndex === quizQuestions.length - 1);
+
+      // Render options
+      const container = document.getElementById('quiz-options-container');
+      container.innerHTML = '';
+
+      q.options.forEach((optText, optIdx) => {
+        const isSelected = (userAnswers[currentQuizIndex] === optIdx);
+        const btn = document.createElement('button');
+
+        let btnClass = 'quiz-opt-btn p-3.5 rounded-2xl border-2 font-bold text-xs sm:text-sm text-left transition flex items-center gap-3 active:scale-98 ';
+        if (isSelected) {
+          btnClass += 'border-indigo-600 bg-indigo-50/80 text-indigo-950 ring-2 ring-indigo-300 shadow-sm';
+        } else {
+          btnClass += 'border-slate-200 bg-slate-50/80 hover:border-indigo-300 hover:bg-indigo-50/40 text-slate-800';
+        }
+
+        btn.className = btnClass;
+        btn.innerHTML = `
+          <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 transition ${
+            isSelected ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-300 text-slate-700'
+          }">
+            ${String.fromCharCode(65 + optIdx)}
+          </span>
+          <span class="flex-1 leading-relaxed">${optText}</span>
+          ${isSelected ? '<span class="text-indigo-600 text-sm font-black">✓</span>' : ''}
+        `;
+
+        btn.onclick = () => selectQuizOption(optIdx);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectQuizOption(optIdx) {
+      if (isQuizSubmitted) return;
+      userAnswers[currentQuizIndex] = optIdx;
+      playSound('pop');
+      renderQuizQuestion();
+      renderQuizPalette();
+      updateQuizProgressInfo();
+    }
+
+    function updateQuizProgressInfo() {
+      const answered = userAnswers.filter(a => a !== null).length;
+      const countEl = document.getElementById('quiz-answered-count');
+      if (countEl) countEl.textContent = `${answered} / ${quizQuestions.length} câu`;
+      const palProgress = document.getElementById('quiz-palette-progress');
+      if (palProgress) palProgress.textContent = `${answered}/${quizQuestions.length}`;
+    }
+
+    function confirmSubmitQuiz() {
+      const answered = userAnswers.filter(a => a !== null).length;
+      if (answered < quizQuestions.length) {
+        const remaining = quizQuestions.length - answered;
+        const confirmMsg = `Em mới hoàn thành ${answered}/${quizQuestions.length} câu (còn ${remaining} câu chưa chọn).\n\nEm có chắc chắn muốn nộp bài ngay để chấm điểm thang 10 không?`;
+        if (!confirm(confirmMsg)) {
+          return;
+        }
+      }
+      submitQuiz();
+    }
+
+    function submitQuiz() {
+      isQuizSubmitted = true;
+      correctCount = 0;
+      quizQuestions.forEach((q, idx) => {
+        if (userAnswers[idx] === q.answer) {
+          correctCount++;
+        }
+      });
+
+      // Thang điểm 10
+      quizScore10 = Math.round((correctCount / quizQuestions.length) * 10 * 10) / 10;
+
+      // Update Points in overall game
+      const earnedXP = correctCount * 5;
+      addPoints(earnedXP);
+
+      // Hide main quiz card, show results card
+      document.getElementById('quiz-main-card').classList.add('hidden');
+      const resultsCard = document.getElementById('quiz-results-card');
+      resultsCard.classList.remove('hidden');
+
+      // Update score display
+      document.getElementById('quiz-final-score-10').textContent = quizScore10.toFixed(1);
+      document.getElementById('quiz-correct-ratio').textContent = `${correctCount} / ${quizQuestions.length}`;
+      const pctVal = Math.round((correctCount / quizQuestions.length) * 100);
+      document.getElementById('quiz-percentage').textContent = `${pctVal}% Chính xác`;
+
+      const evalBox = document.getElementById('quiz-final-evaluation');
+      const iconEl = document.getElementById('quiz-result-icon');
+
+      if (quizScore10 >= 9.0) {
+        evalBox.textContent = '🌟 Xuất sắc phi thường! Em chính là một Đại Kiện Tướng Alkane xuất sắc nhất, nắm vững toàn diện kiến thức SGK!';
+        iconEl.textContent = '👑';
+        playSound('fanfare');
+        triggerConfetti(3500);
+        unlockBadge('b5');
+      } else if (quizScore10 >= 8.0) {
+        evalBox.textContent = '🎉 Giỏi lắm! Em đạt thành tích rất cao và hiểu sâu sắc kiến thức về Alkane!';
+        iconEl.textContent = '🏆';
+        playSound('fanfare');
+        triggerConfetti(2500);
+        unlockBadge('b5');
+      } else if (quizScore10 >= 6.5) {
+        evalBox.textContent = '👍 Khá tốt! Em đã nắm được hầu hết các nội dung trọng tâm. Hãy đọc kỹ phần giải thích bên dưới để ôn lại các câu chưa đúng nhé!';
+        iconEl.textContent = '⭐';
+        playSound('correct');
+      } else if (quizScore10 >= 5.0) {
+        evalBox.textContent = '💪 Đạt yêu cầu! Em đã hiểu các khái niệm cơ bản. Hãy dành thời gian xem kỹ lời giải chi tiết và làm lại để đạt điểm 9-10 nhé!';
+        iconEl.textContent = '🎯';
+        playSound('correct');
+      } else {
+        evalBox.textContent = '📚 Cần cố gắng thêm! Em hãy đọc kỹ bảng giải thích 20 câu bên dưới, sau đó bấm "Làm lại bài thi" để nâng cao điểm số nhé!';
+        iconEl.textContent = '💡';
+        playSound('wrong');
+      }
+
+      gameState.completedTasks.quiz = true;
+      updateGlobalProgress();
+
+      // Render 20 Review Questions with Answers and Explanations
+      renderQuizReviewList();
+
+      // Smooth scroll to results
+      resultsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function renderQuizReviewList() {
+      const list = document.getElementById('quiz-review-list');
+      if (!list) return;
+      list.innerHTML = '';
+
+      quizQuestions.forEach((q, idx) => {
+        const userChoice = userAnswers[idx];
+        const isCorrect = (userChoice === q.answer);
+
+        if (currentReviewFilter === 'correct' && !isCorrect) return;
+        if (currentReviewFilter === 'wrong' && isCorrect) return;
+
+        const card = document.createElement('div');
+        card.className = `p-4 sm:p-5 rounded-2xl border-2 transition ${
+          isCorrect ? 'bg-emerald-50/50 border-emerald-300' : 'bg-rose-50/50 border-rose-300'
+        }`;
+
+        const userChoiceText = userChoice !== null ? `${String.fromCharCode(65 + userChoice)}. ${q.options[userChoice]}` : 'Chưa chọn';
+        const correctChoiceText = `${String.fromCharCode(65 + q.answer)}. ${q.options[q.answer]}`;
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-3 mb-2.5">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black ${
+                isCorrect ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'
+              }">
+                ${idx + 1}
+              </span>
+              <span class="text-xs font-bold px-2.5 py-0.5 rounded-full border ${q.levelColor}">
+                ${q.level}
+              </span>
+            </div>
+            <span class="text-xs font-black px-3 py-1 rounded-full ${
+              isCorrect ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-rose-100 text-rose-800 border border-rose-300'
+            }">
+              ${isCorrect ? '✅ Đúng (+0.5đ)' : '❌ Chưa đúng (0đ)'}
+            </span>
+          </div>
+
+          <h5 class="font-extrabold text-slate-800 text-sm sm:text-base mb-3 leading-snug">
+            ${q.title}
+          </h5>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs font-bold mb-3">
+            <div class="p-2.5 rounded-xl border ${
+              isCorrect ? 'bg-white border-emerald-200 text-emerald-950' : 'bg-white border-rose-200 text-rose-950'
+            }">
+              <span class="text-[10px] uppercase font-black text-slate-400 block mb-0.5">Đáp án em chọn:</span>
+              <span>${userChoiceText}</span>
+            </div>
+
+            <div class="p-2.5 rounded-xl border bg-white border-emerald-300 text-emerald-950">
+              <span class="text-[10px] uppercase font-black text-emerald-600 block mb-0.5">Đáp án chuẩn:</span>
+              <span class="text-emerald-800 font-extrabold">✓ ${correctChoiceText}</span>
+            </div>
+          </div>
+
+          <!-- Lời giải thích SGK -->
+          <div class="p-3 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 leading-relaxed">
+            <span class="text-indigo-700 font-black inline-flex items-center gap-1">
+              <span>📖</span> Giải thích chi tiết (SGK KHTN 9):
+            </span>
+            <span class="mt-1 block">${q.explain}</span>
+          </div>
+        `;
+
+        list.appendChild(card);
+      });
+    }
+
+    function filterReview(filterType) {
+      currentReviewFilter = filterType;
+      ['all', 'correct', 'wrong'].forEach(type => {
+        const btn = document.getElementById('filter-review-' + type);
+        if (btn) {
+          if (type === filterType) {
+            btn.className = 'review-filter-btn px-3 py-1 rounded-lg bg-white shadow-xs text-indigo-700 font-black';
+          } else {
+            btn.className = 'review-filter-btn px-3 py-1 rounded-lg text-slate-600 hover:bg-white/60';
+          }
+        }
+      });
+      renderQuizReviewList();
+    }
+
     function restartQuiz() {
-      currentQuizIndex = 0;
-      quizScore = 0;
-      document.getElementById('quiz-score-display').textContent = '0 / 80';
+      initQuiz();
       document.getElementById('quiz-main-card').classList.remove('hidden');
       document.getElementById('quiz-results-card').classList.add('hidden');
-      document.getElementById('quiz-next-btn').innerHTML = `<span>Câu tiếp theo</span> <span>➔</span>`;
-      renderQuizQuestion();
+      document.getElementById('tab-challenge').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    /* ========================================================
+       16. GOOGLE DRIVE EXPORT & TIỆN ÍCH LƯU TRỮ
+       ======================================================== */
+    function saveAndOpenGoogleDrive() {
+      const studentName = gameState.playerName || 'Học sinh';
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('vi-VN');
+      const timeStr = now.toLocaleTimeString('vi-VN');
+      const filename = `Ket_Qua_Bai23_Alkane_${studentName.replace(/\s+/g, '_')}_${dateStr.replace(/\//g, '-')}.html`;
+
+      // Tạo nội dung file báo cáo học tập HTML hoàn chỉnh, độc lập
+      let questionsRows = '';
+      quizQuestions.forEach((q, idx) => {
+        const userChoice = userAnswers[idx];
+        const isCorrect = (userChoice === q.answer);
+        const userText = userChoice !== null ? `${String.fromCharCode(65 + userChoice)}. ${q.options[userChoice]}` : 'Chưa làm';
+        const correctText = `${String.fromCharCode(65 + q.answer)}. ${q.options[q.answer]}`;
+
+        questionsRows += `
+          <div style="margin-bottom: 18px; padding: 16px; border-radius: 12px; border: 1px solid ${isCorrect ? '#a7f3d0' : '#fecdd3'}; background: ${isCorrect ? '#f0fdf4' : '#fff1f2'};">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-weight: bold; font-size: 14px; color: #1e293b;">Câu ${idx + 1} (${q.level})</span>
+              <span style="font-size: 12px; font-weight: bold; color: ${isCorrect ? '#065f46' : '#9f1239'}; background: ${isCorrect ? '#d1fae5' : '#ffe4e6'}; padding: 3px 10px; border-radius: 20px;">${isCorrect ? '✅ ĐÚNG' : '❌ SAI'}</span>
+            </div>
+            <p style="font-size: 14px; margin: 0 0 10px 0; color: #334155; font-weight: 600;">${q.title}</p>
+            <div style="font-size: 13px; line-height: 1.6; color: #475569;">
+              <div>• <b>Đáp án đã chọn:</b> ${userText}</div>
+              <div style="color: #047857;">• <b>Đáp án đúng:</b> ${correctText}</div>
+              <div style="margin-top: 6px; padding: 8px; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; color: #1e293b;">
+                <b>💡 Giải thích SGK:</b> ${q.explain}
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      const reportHTML = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Báo Cáo Kết Quả Ôn Tập - Bài 23 Alkane KHTN 9</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: #f8fafc; padding: 24px; color: #0f172a; }
+    .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); padding: 32px; border: 1px solid #e2e8f0; }
+    .header { text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 24px; }
+    .score-badge { display: inline-block; background: linear-gradient(135deg, #059669, #0d9488); color: white; padding: 16px 32px; border-radius: 16px; margin: 16px 0; }
+    .drive-banner { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 12px 16px; margin-bottom: 24px; font-size: 13px; color: #1e40af; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div style="font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: #64748b;">KHOA HỌC TỰ NHIÊN 9 • KẾT NỐI TRI THỨC</div>
+      <h1 style="font-size: 24px; margin: 6px 0; color: #0f172a;">PHIẾU BÁO CÁO KẾT QUẢ ÔN TẬP: BÀI 23 - ALKANE</h1>
+      <p style="font-size: 13px; color: #64748b; margin: 0;">Thời gian nộp bài: ${timeStr} ngày ${dateStr}</p>
+    </div>
+
+    <div style="background: #f1f5f9; padding: 16px; border-radius: 14px; margin-bottom: 20px; display: flex; justify-content: space-around; flex-wrap: wrap;">
+      <div><b>👤 Học sinh:</b> <span style="color: #0284c7;">${studentName}</span></div>
+      <div><b>🏆 Thang điểm 10:</b> <span style="color: #059669; font-weight: 900; font-size: 18px;">${quizScore10.toFixed(1)} / 10.0</span></div>
+      <div><b>✅ Số câu đúng:</b> <span style="color: #4f46e5; font-weight: bold;">${correctCount} / ${quizQuestions.length} câu</span></div>
+    </div>
+
+    <div class="drive-banner">
+      📁 <b>Lưu trữ Google Drive:</b> File báo cáo kết quả này được tạo tự động để học sinh lưu trữ vào Google Drive cá nhân hoặc đính kèm nộp bài tập trực tuyến cho thầy cô giáo.
+    </div>
+
+    <h3 style="font-size: 16px; border-left: 4px solid #4f46e5; padding-left: 10px; margin-bottom: 16px;">CHI TIẾT 20 CÂU HỎI & GIẢI THÍCH</h3>
+    ${questionsRows}
+
+    <div style="text-align: center; margin-top: 30px; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 16px;">
+      Hệ Thống Học Liệu Số KHTN 9 • Bài 23 Alkane
+    </div>
+  </div>
+</body>
+</html>`;
+
+      // Tạo Blob và tải file về máy
+      const blob = new Blob([reportHTML], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      // Mở Google Drive ở tab mới
+      setTimeout(() => {
+        window.open('https://drive.google.com/drive/my-drive', '_blank');
+      }, 400);
+
+      alert(`🎉 ĐÃ TẢI FILE BÁO CÁO KẾT QUẢ THÀNH CÔNG!\n\n📄 Tên file: ${filename}\n📁 Google Drive đang được mở ở tab mới.\n👉 Em chỉ cần kéo thả file này vào Google Drive của mình để lưu trữ hoặc gửi link cho thầy cô nhé!`);
+    }
+
+    function printQuizResult() {
+      const studentName = gameState.playerName || 'Học sinh';
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('vi-VN');
+      
+      const printWindow = window.open('', '_blank', 'width=900,height=800');
+      if (!printWindow) {
+        alert('Trình duyệt đang chặn cửa sổ bật lên. Vui lòng cấp quyền mở pop-up để in kết quả!');
+        return;
+      }
+
+      let rows = '';
+      quizQuestions.forEach((q, idx) => {
+        const userChoice = userAnswers[idx];
+        const isCorrect = (userChoice === q.answer);
+        const userText = userChoice !== null ? `${String.fromCharCode(65 + userChoice)}. ${q.options[userChoice]}` : 'Chưa chọn';
+        const correctText = `${String.fromCharCode(65 + q.answer)}. ${q.options[q.answer]}`;
+
+        rows += `
+          <div style="margin-bottom: 14px; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; page-break-inside: avoid;">
+            <div style="font-weight: bold; font-size: 13px; margin-bottom: 4px;">
+              Câu ${idx + 1} (${q.level}): ${isCorrect ? '<span style="color: #059669;">[ĐÚNG +0.5đ]</span>' : '<span style="color: #dc2626;">[SAI]</span>'}
+            </div>
+            <div style="font-size: 13px; margin-bottom: 6px;">${q.title}</div>
+            <div style="font-size: 12px; color: #334155;">
+              <div>• <b>Đã chọn:</b> ${userText}</div>
+              <div style="color: #059669;">• <b>Đáp án đúng:</b> ${correctText}</div>
+              <div style="margin-top: 4px; font-style: italic; color: #475569;">• Lời giải: ${q.explain}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      printWindow.document.write(`
+        <html>
+        <head>
+          <title>Phiếu Điểm - ${studentName} - Bài 23 Alkane</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.5; color: #000; }
+            h2, h3 { margin: 4px 0; }
+            .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+            .summary-box { background: #f8fafc; border: 1px solid #000; padding: 10px 15px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h3>PHIẾU ĐIỂM ÔN TẬP KHTN 9 - BÀI 23: ALKANE</h3>
+            <div>Thang điểm 10.0 • 20 câu hỏi trắc nghiệm</div>
+          </div>
+          <div class="summary-box">
+            <b>Học sinh:</b> ${studentName} &nbsp;|&nbsp; 
+            <b>Ngày:</b> ${dateStr} &nbsp;|&nbsp; 
+            <b>Điểm số (Thang 10):</b> <b style="font-size: 16px; color: #059669;">${quizScore10.toFixed(1)} / 10.0</b> &nbsp;|&nbsp; 
+            <b>Số câu đúng:</b> ${correctCount} / ${quizQuestions.length}
+          </div>
+          <h4>DANH SÁCH BÀI LÀM VÀ LỜI GIẢI CHI TIẾT</h4>
+          ${rows}
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => {
+        printWindow.print();
+      }, 500);
+    }
+
+    function copyQuizResult() {
+      const studentName = gameState.playerName || 'Học sinh';
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('vi-VN');
+      const text = `🎓 BÁO CÁO KẾT QUẢ ÔN TẬP KHTN 9 - BÀI 23: ALKANE\n👤 Học sinh: ${studentName}\n📅 Ngày hoàn thành: ${dateStr}\n🏆 Điểm số (Thang 10): ${quizScore10.toFixed(1)} / 10.0 điểm\n✅ Số câu đúng: ${correctCount} / ${quizQuestions.length} câu (${Math.round((correctCount/quizQuestions.length)*100)}%)\n⭐ Đã nộp và lưu trữ kết quả bài học.`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('btn-copy-result');
+        if (btn) {
+          const originalHTML = btn.innerHTML;
+          btn.innerHTML = '<span>✅</span> <span>Đã sao chép kết quả!</span>';
+          setTimeout(() => {
+            btn.innerHTML = originalHTML;
+          }, 2500);
+        }
+      }).catch(err => {
+        alert('Không thể sao chép vào bộ nhớ đệm: ' + err);
+      });
     }
 
     /* ========================================================
